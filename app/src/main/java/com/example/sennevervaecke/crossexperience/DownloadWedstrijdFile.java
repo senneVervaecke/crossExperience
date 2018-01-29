@@ -48,7 +48,7 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         FTPClient ftpClient = new FTPClient();
         try {
-            server = InetAddress.getByName("192.168.1.127");
+            server = InetAddress.getByName("192.168.1.125");
             ftpClient.connect(server, port);
             ftpClient.login(user, pass);
             ftpClient.enterLocalPassiveMode();
