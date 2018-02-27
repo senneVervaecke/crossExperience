@@ -3,20 +3,18 @@ package com.example.sennevervaecke.crossexperience;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.widget.ProgressBar;
 
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 
 /**
  * Created by sennevervaecke on 12/23/2017.
@@ -24,26 +22,63 @@ import java.net.InetAddress;
 public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
 
     private Context context;
+    private Session session = null;
+    private ChannelSftp channel = null;
+    private JSch ssh = null;
+    private String path;
+    private String fileName;
     private Handler handler;
-    private double progres = 0;
-    private double progresPercent;
-    private double totaal = 100;
-    String path;
-    String fileName;
+
+    private static final String HOST = "10.3.50.40";
+    private final String USERNAME = "appuser";
+    private final String PASSWORD = "crossexp";
 
     public static final int DOWNLOADED = 0;
 
     public DownloadWedstrijdFile(Context context, Handler handler, String wedstrijdNaam, String reeksNaam, String fileType){
         this.context = context;
-        this.handler = handler;
-        this.path = wedstrijdNaam + "/" + reeksNaam + fileType;
+        this.path = "/crossexperience/wedstrijden/" + wedstrijdNaam + "/" + reeksNaam + fileType;
         this.fileName = wedstrijdNaam + "_" +  reeksNaam + fileType;
+        this.handler = handler;
     }
 
-    InetAddress server;
-    int port = 45788;
-    String user = "appUser";
-    String pass = "";
+    @Override
+    protected void onPreExecute() {
+        ssh = new JSch();
+    }
+
+    @Override
+    protected Void doInBackground(Void ... voids) {
+        try {
+            session = ssh.getSession(USERNAME, HOST, 22);
+            session.setPassword(PASSWORD);
+            //security issue
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.connect();
+
+            String remoteFile = path;
+            File downloadFile = new File(context.getFilesDir(), fileName);
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+
+            channel = (ChannelSftp) session.openChannel("sftp");
+            channel.connect();
+            channel.get(remoteFile, outputStream);
+
+        } catch (JSchException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        handler.sendEmptyMessage(DOWNLOADED);
+    }
+    /* local ftp server
     @Override
     protected Void doInBackground(Void... voids) {
         FTPClient ftpClient = new FTPClient();
@@ -69,38 +104,10 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
             else{
                 Log.i("ftp", "File " + fileName + "failed to download.");
             }
-
-            /*
-            // APPROACH #2: using InputStream retrieveFileStream(String)
-            String remoteFile2 = "/wedstrijden/" + path;
-            File downloadFile2 = new File(context.getFilesDir(), fileName);
-            OutputStream outputStream2 = new BufferedOutputStream(new FileOutputStream(downloadFile2));
-            InputStream inputStream = ftpClient.retrieveFileStream(remoteFile2);
-            totaal = inputStream.available() / 4096;
-            byte[] bytesArray = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = inputStream.read(bytesArray)) != -1) {
-                outputStream2.write(bytesArray, 0, bytesRead);
-                publishProgress();
-                //wait(10);
-            }
-
-            boolean success = ftpClient.completePendingCommand();
-            if (success) {
-                Log.i("ftp", "File " + fileName + " has been downloaded successfully.");
-            }
-            else{
-                Log.i("ftp", "File " + fileName + "failed to download.");
-            }
-            outputStream2.close();
-            inputStream.close();
-*/
         } catch (IOException ex) {
             Log.e("ftp","Error: " + ex.getMessage());
             ex.printStackTrace();
-        }/* catch (InterruptedException e) {
-            e.printStackTrace();
-        } */finally {
+        } finally {
             try {
                 if (ftpClient.isConnected()) {
                     ftpClient.logout();
@@ -110,24 +117,7 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
                 ex.printStackTrace();
             }
         }
-
-
         return null;
     }
-
-    @Override
-    protected void onProgressUpdate(Void... values) {
-        /*
-        progres++;
-        if((int) ((progres / totaal)*100) > (int) progresPercent) {
-            progresPercent++;
-            handler.sendEmptyMessage(what.PROGRESSUPDATE.ordinal());
-        }
-        */
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        handler.sendEmptyMessage(DOWNLOADED);
-    }
+    */
 }
