@@ -3,6 +3,7 @@ package com.example.sennevervaecke.crossexperience;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -40,14 +41,20 @@ public class PlayerActivity extends AppCompatActivity {
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
-                Log.i("ftp", "handler is called.");
                 super.handleMessage(msg);
-                if(msg.what == DownloadWedstrijdFile.DOWNLOADED){
+                if(msg.what == DownloadMonitor.UPDATE){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        progressBar.setProgress(msg.arg1, true);
+                    }
+                    else{
+                        progressBar.setProgress(msg.arg1);
+                    }
+                }
+                else if(msg.what == DownloadMonitor.END){
                     progressBar.setVisibility(View.GONE);
                     setVideoURI();
                     LocalDB.setReadyState(LocalDB.wedstrijdPos, LocalDB.reeksPos, true);
                 }
-
             }
         };
 
@@ -66,7 +73,8 @@ public class PlayerActivity extends AppCompatActivity {
     private void startVideoDownload(){
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        progressBar.setIndeterminate(true);
+        progressBar.setMax(100);
+        progressBar.setProgress(0);
         new DownloadWedstrijdFile(this, handler, wedstrijdNaam, reeks.getNiveau(), ".mp4").execute();
     }
 

@@ -62,7 +62,7 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
 
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
-            channel.get(remoteFile, outputStream);
+            channel.get(remoteFile, outputStream, new DownloadMonitor(handler));
 
         } catch (JSchException e) {
             e.printStackTrace();
