@@ -1,4 +1,4 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;

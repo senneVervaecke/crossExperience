@@ -1,4 +1,4 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.view.activity;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.text.DateFormat;
+import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 

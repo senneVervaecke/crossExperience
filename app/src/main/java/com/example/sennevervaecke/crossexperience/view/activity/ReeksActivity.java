@@ -1,27 +1,17 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.view.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import org.json.JSONObject;
-import org.json.JSONStringer;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.model.LocalDB;
+import com.example.sennevervaecke.crossexperience.model.Reeks;
+import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
 
 public class ReeksActivity extends AppCompatActivity {
 
@@ -36,7 +26,7 @@ public class ReeksActivity extends AppCompatActivity {
 
         wedstrijd = getWedstrijd();
 
-        ListView listView = findViewById(R.id.reeksListview);
+        ListView listView = findViewById(R.id.reeksListview2);
         ReeksAdapter adapter = new ReeksAdapter(this, wedstrijd.getReeksen());
         listView.setAdapter(adapter);
 
@@ -71,18 +61,6 @@ public class ReeksActivity extends AppCompatActivity {
                 wedstrijd = LocalDB.getWedstrijd(LocalDB.wedstrijdPos);
             }
             //ERROR HANDLING
-            /*
-            try {
-                FileInputStream fis = new FileInputStream(new File(getCacheDir(), cacheFilename));
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                wedstrijd  = (Wedstrijd) ois.readObject();
-                ois.close();
-                fis.close();
-            }
-            catch (IOException e){ e.printStackTrace();}
-            catch (ClassNotFoundException e){}
-            this.deleteFile(cacheFilename);
-            */
         }
         return wedstrijd;
     }
@@ -96,33 +74,5 @@ public class ReeksActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onStop(){
-        super.onStop();
-        /*
-        Log.i("onstop", "is called");
-        FileOutputStream outputStream;
-        ObjectOutputStream objectOutputStream;
-        try {
-            File file = new File(getCacheDir(), cacheFilename);
-            outputStream = new FileOutputStream(file);
-            objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(wedstrijd);
-            objectOutputStream.close();
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-    }
-    @Override protected void onDestroy(){
-        /*
-        Log.e("ondestroy", "is called");
-        super.onDestroy();
-        this.deleteFile(cacheFilename);
-        */
-        super.onDestroy();
     }
 }

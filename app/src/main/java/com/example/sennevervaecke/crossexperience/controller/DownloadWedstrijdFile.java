@@ -1,9 +1,13 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.controller;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 
+import com.example.sennevervaecke.crossexperience.model.LocalDB;
+import com.example.sennevervaecke.crossexperience.model.Reeks;
+import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -28,17 +32,20 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
     private String path;
     private String fileName;
     private Handler handler;
+    private Wedstrijd wedstrijd;
+    private Reeks reeks;
 
     private static final String HOST = "10.3.50.40";
     private final String USERNAME = "appuser";
     private final String PASSWORD = "crossexp";
 
-    public static final int DOWNLOADED = 0;
-
-    public DownloadWedstrijdFile(Context context, Handler handler, String wedstrijdNaam, String reeksNaam, String fileType){
+    public DownloadWedstrijdFile(Context context, Handler handler, Wedstrijd wedstrijd, Reeks reeks, String fileType){
         this.context = context;
-        this.path = "/crossexperience/wedstrijden/" + wedstrijdNaam + "/" + reeksNaam + fileType;
-        this.fileName = wedstrijdNaam + "_" +  reeksNaam + fileType;
+        this.path = "/crossexperience/wedstrijden/" + wedstrijd.getNaam() + "/" + reeks.getNiveau() + fileType;
+        this.fileName = wedstrijd.getNaam() + "_" +  reeks.getNiveau() + fileType;
+
+        this.wedstrijd = wedstrijd;
+        this.reeks = reeks;
         this.handler = handler;
     }
 
@@ -74,50 +81,26 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    public Wedstrijd getWedstrijd() {
+        return wedstrijd;
+    }
+
+    public Reeks getReeks() {
+        return reeks;
+    }
+
     @Override
     protected void onPostExecute(Void aVoid) {
-        handler.sendEmptyMessage(DOWNLOADED);
+        //replace this to DownloadMonitor maybe ???
+        Message.obtain(handler, DownloadMonitor.END).sendToTarget();
+        LocalDB.setReadyState(wedstrijd.getId(), reeks.getId(), true);
     }
-    /* local ftp server
-    @Override
-    protected Void doInBackground(Void... voids) {
-        FTPClient ftpClient = new FTPClient();
-        try {
-            server = InetAddress.getByName("192.168.1.125");
-            ftpClient.connect(server, port);
-            ftpClient.login(user, pass);
-            ftpClient.enterLocalPassiveMode();
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-
-            Log.i("ftp", ftpClient.getReplyString());
-
-            // APPROACH #1: using retrieveFile(String, OutputStream)
-            String remoteFile1 = "/wedstrijden/" + path;
-            File downloadFile1 = new File(context.getFilesDir(), fileName);
-            OutputStream outputStream1 = new BufferedOutputStream(new FileOutputStream(downloadFile1));
-            boolean success = ftpClient.retrieveFile(remoteFile1, outputStream1);
-            outputStream1.close();
-
-            if (success) {
-                Log.i("ftp", "File " + fileName + " has been downloaded successfully.");
-            }
-            else{
-                Log.i("ftp", "File " + fileName + "failed to download.");
-            }
-        } catch (IOException ex) {
-            Log.e("ftp","Error: " + ex.getMessage());
-            ex.printStackTrace();
-        } finally {
-            try {
-                if (ftpClient.isConnected()) {
-                    ftpClient.logout();
-                    ftpClient.disconnect();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return null;
-    }
-    */
 }

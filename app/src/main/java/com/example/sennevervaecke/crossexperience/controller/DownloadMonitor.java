@@ -1,4 +1,4 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.controller;
 
 import android.os.Handler;
 import android.os.Message;
@@ -30,8 +30,8 @@ public class DownloadMonitor implements SftpProgressMonitor {
 
     @Override
     public void init(int i, String s, String s1, long l) {
+        Message.obtain(handler, START).sendToTarget();
         max = l;
-        Log.e("percent", String.valueOf(progressPercent));
     }
 
     @Override
@@ -39,7 +39,6 @@ public class DownloadMonitor implements SftpProgressMonitor {
         progressByte += l;
 
         int newProgressPercent = (int)((progressByte * 100) / max);
-        Log.e("progress", String.valueOf(newProgressPercent));
         if(newProgressPercent > progressPercent){
             progressPercent = newProgressPercent;
             Message.obtain(handler, UPDATE, progressPercent, 0).sendToTarget();
@@ -48,7 +47,5 @@ public class DownloadMonitor implements SftpProgressMonitor {
     }
 
     @Override
-    public void end() {
-        Message.obtain(handler, END).sendToTarget();
-    }
+    public void end() {}
 }

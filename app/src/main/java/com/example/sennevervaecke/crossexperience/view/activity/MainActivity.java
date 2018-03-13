@@ -1,17 +1,18 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.view.activity;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.controller.DownloadManager;
+import com.example.sennevervaecke.crossexperience.model.LocalDB;
+import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = new Intent(this, DownloadManager.class);
+        startService(intent);
 
         if(LocalDB.startup) {
             LocalDB.fill();

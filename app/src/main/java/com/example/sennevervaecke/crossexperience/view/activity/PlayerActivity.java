@@ -1,22 +1,27 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.view.activity;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 import android.media.MediaPlayer.OnPreparedListener;
+
+import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.controller.DownloadManager;
+import com.example.sennevervaecke.crossexperience.model.LocalDB;
+import com.example.sennevervaecke.crossexperience.model.Reeks;
 
 
 public class PlayerActivity extends AppCompatActivity {
@@ -25,9 +30,27 @@ public class PlayerActivity extends AppCompatActivity {
     private int position = 0;
     private MediaController mediaController;
     ProgressBar progressBar;
-    Handler handler;
     private Reeks reeks;
     private String wedstrijdNaam;
+    private DownloadManager downloadManager;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.e("service", "onConnect");
+            DownloadManager.DownloadBinder binder = (DownloadManager.DownloadBinder) iBinder;
+            downloadManager = binder.getService();
+            if(!reeks.isReadyState()){
+                Log.e("service", "start download");
+                startVideoDownload();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,48 +61,28 @@ public class PlayerActivity extends AppCompatActivity {
         reeks = (Reeks) intent.getSerializableExtra("reeks");
         wedstrijdNaam = intent.getStringExtra("wedstrijdNaam");
 
-        handler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if(msg.what == DownloadMonitor.UPDATE){
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        progressBar.setProgress(msg.arg1, true);
-                    }
-                    else{
-                        progressBar.setProgress(msg.arg1);
-                    }
-                }
-                else if(msg.what == DownloadMonitor.END){
-                    progressBar.setVisibility(View.GONE);
-                    setVideoURI();
-                    LocalDB.setReadyState(LocalDB.wedstrijdPos, LocalDB.reeksPos, true);
-                }
-            }
-        };
+        Intent serviceIntent = new Intent(this, DownloadManager.class);
+        Log.e("service", "before bind");
+        bindService(serviceIntent, connection, getApplicationContext().BIND_AUTO_CREATE);
+
 
         if(reeks.isReadyState()){
             setVideoview();
             setVideoURI();
         }
         else{
-            startVideoDownload();
             setVideoview();
            }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-
     private void startVideoDownload(){
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setMax(100);
-        progressBar.setProgress(0);
-        new DownloadWedstrijdFile(this, handler, wedstrijdNaam, reeks.getNiveau(), ".mp4").execute();
+        //downloadManager.startDownload(wedstrijdNaam, reeks.getNiveau());
+
     }
 
     //always first setVideoView!!!
-    private void setVideoURI(){
+    public void setVideoURI(){
         try {
             // ID of video file.
             //int id = this.getRawResIdByName(wedstrijdNaam + "_" + reeks.getNiveau());
@@ -90,7 +93,6 @@ public class PlayerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 
     private void setVideoview(){
         videoView = findViewById(R.id.crossPlayer);
@@ -144,16 +146,6 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Find ID corresponding to the name of the resource (in the directory raw).
-    public int getRawResIdByName(String resName) {
-        String pkgName = this.getPackageName();
-        // Return 0 if not found.
-        int resID = this.getResources().getIdentifier(resName, "raw", pkgName);
-        Log.i("AndroidVideoView", "Res Name: " + resName + "==> Res ID = " + resID);
-        return resID;
-    }
-
-
     // When you change direction of phone, this method will be called.
     // It store the state of video (Current position)
     @Override
@@ -163,8 +155,11 @@ public class PlayerActivity extends AppCompatActivity {
         // Store current position.
         savedInstanceState.putInt("CurrentPosition", videoView.getCurrentPosition());
         videoView.pause();
-    }
 
+        if(progressBar != null && progressBar.getVisibility() == View.VISIBLE){
+            savedInstanceState.putInt("currentprogress", progressBar.getProgress());
+        }
+    }
 
     // After rotating the phone. This method is called.
     @Override
@@ -174,8 +169,10 @@ public class PlayerActivity extends AppCompatActivity {
         // Get saved position.
         position = savedInstanceState.getInt("CurrentPosition");
         videoView.seekTo(position);
-    }
 
+        int progress = savedInstanceState.getInt("currentprogress", 0);
+        progressBar.setProgress(progress);
+    }
 }
 
 //source: http://o7planning.org/en/10487/android-mediaplayer-and-videoview-tutorial

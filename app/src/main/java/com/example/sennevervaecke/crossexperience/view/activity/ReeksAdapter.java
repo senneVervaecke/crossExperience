@@ -1,4 +1,4 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.view.activity;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.net.ConnectException;
+import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.model.Reeks;
+
 import java.util.ArrayList;
 
 /**

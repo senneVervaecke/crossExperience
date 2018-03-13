@@ -1,5 +1,10 @@
 package com.example.sennevervaecke.crossexperience;
 
+import com.example.sennevervaecke.crossexperience.model.Adres;
+import com.example.sennevervaecke.crossexperience.model.LocalDB;
+import com.example.sennevervaecke.crossexperience.model.Reeks;
+import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
+
 import org.junit.Test;
 
 import java.util.ArrayList;

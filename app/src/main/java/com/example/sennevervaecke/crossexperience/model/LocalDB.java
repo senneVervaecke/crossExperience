@@ -1,4 +1,4 @@
-package com.example.sennevervaecke.crossexperience;
+package com.example.sennevervaecke.crossexperience.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
