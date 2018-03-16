@@ -3,7 +3,6 @@ package com.example.sennevervaecke.crossexperience.view.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,33 +11,34 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.sennevervaecke.crossexperience.R;
-import com.example.sennevervaecke.crossexperience.controller.interfaces.ReeksFragmentCom;
-import com.example.sennevervaecke.crossexperience.model.LocalDB;
-import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
-import com.example.sennevervaecke.crossexperience.view.activity.ReeksAdapter;
+import com.example.sennevervaecke.crossexperience.controller.interfaces.CourseFragmentCom;
+import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
+import com.example.sennevervaecke.crossexperience.view.activity.CourseAdapter;
 
-public class ReeksFragment extends Fragment implements AdapterView.OnItemClickListener
+public class CourseFragment extends Fragment implements AdapterView.OnItemClickListener
 {
-    private ReeksFragmentCom communication;
-    private Wedstrijd wedstrijd;
+    private CourseFragmentCom communication;
+    private Competition competition;
+    private DatabaseHelper databaseHelper;
 
-    public ReeksFragment() {
+    public CourseFragment() {
         // Required empty public constructor
     }
 
-    public Wedstrijd getWedstrijd() {
-        return wedstrijd;
+    public Competition getCompetition() {
+        return competition;
     }
 
-    public void setWedstrijd(Wedstrijd wedstrijd) {
-        this.wedstrijd = wedstrijd;
+    public void setCompetition(Competition competition) {
+        this.competition = competition;
     }
 
     public void refresh(){
-        if(this.isAdded() && wedstrijd != null){
-            wedstrijd = LocalDB.getWedstrijd(wedstrijd.getNaam());
+        if(this.isAdded() && competition != null){
+            //competition = null;
             ListView listView = getView().findViewById(R.id.reeksListView);
-            ReeksAdapter adapter = new ReeksAdapter(getContext(), wedstrijd.getReeksen());
+            CourseAdapter adapter = new CourseAdapter(getContext(), competition.getCourses());
             listView.setAdapter(adapter);
         }
     }
@@ -53,13 +53,13 @@ public class ReeksFragment extends Fragment implements AdapterView.OnItemClickLi
 
         View view = inflater.inflate(R.layout.fragment_reeks, container, false);
         ListView listView = view.findViewById(R.id.reeksListView);
-        if(wedstrijd != null) {
-            ReeksAdapter adapter = new ReeksAdapter(getContext(), wedstrijd.getReeksen());
+        if(competition != null) {
+            CourseAdapter adapter = new CourseAdapter(getContext(), competition.getCourses());
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(this);
         }
         else{
-            Log.e("reeksFragment", "wedstrijd = null, propably reeksFragment.setWedstrijd(Wedstrijd wedstrijd) is not called.");
+            Log.e("reeksFragment", "competition = null, propably courseFragment.setCompetition(Competition competition) is not called.");
         }
         return view;
     }
@@ -67,7 +67,7 @@ public class ReeksFragment extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public void onAttach(Activity activity) {
         try {
-            communication = (ReeksFragmentCom) activity;
+            communication = (CourseFragmentCom) activity;
         }
         catch (ClassCastException e){
             e.printStackTrace();
@@ -77,6 +77,6 @@ public class ReeksFragment extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        communication.onReeksItemClick(wedstrijd, wedstrijd.getReeksen().get(i));
+        communication.onCourseItemClick(competition, competition.getCourses().get(i));
     }
 }

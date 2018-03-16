@@ -5,9 +5,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 
-import com.example.sennevervaecke.crossexperience.model.LocalDB;
-import com.example.sennevervaecke.crossexperience.model.Reeks;
-import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
+import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.Course;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -23,7 +22,7 @@ import java.io.OutputStream;
 /**
  * Created by sennevervaecke on 12/23/2017.
  */
-public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
+public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
 
     private Context context;
     private Session session = null;
@@ -32,20 +31,20 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
     private String path;
     private String fileName;
     private Handler handler;
-    private Wedstrijd wedstrijd;
-    private Reeks reeks;
+    private Competition competition;
+    private Course course;
 
     private static final String HOST = "10.3.50.40";
     private final String USERNAME = "appuser";
     private final String PASSWORD = "crossexp";
 
-    public DownloadWedstrijdFile(Context context, Handler handler, Wedstrijd wedstrijd, Reeks reeks, String fileType){
+    public DownloadCompetitionTask(Context context, Handler handler, Competition competition, Course course, String fileType){
         this.context = context;
-        this.path = "/crossexperience/wedstrijden/" + wedstrijd.getNaam() + "/" + reeks.getNiveau() + fileType;
-        this.fileName = wedstrijd.getNaam() + "_" +  reeks.getNiveau() + fileType;
+        this.path = "/crossexperience/wedstrijden/" + competition.getName() + "/" + course.getLevel() + fileType;
+        this.fileName = competition.getName() + "_" +  course.getLevel() + fileType;
 
-        this.wedstrijd = wedstrijd;
-        this.reeks = reeks;
+        this.competition = competition;
+        this.course = course;
         this.handler = handler;
     }
 
@@ -89,18 +88,18 @@ public class DownloadWedstrijdFile extends AsyncTask<Void, Void, Void> {
         this.handler = handler;
     }
 
-    public Wedstrijd getWedstrijd() {
-        return wedstrijd;
+    public Competition getCompetition() {
+        return competition;
     }
 
-    public Reeks getReeks() {
-        return reeks;
+    public Course getCourse() {
+        return course;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         //replace this to DownloadMonitor maybe ???
         Message.obtain(handler, DownloadMonitor.END).sendToTarget();
-        LocalDB.setReadyState(wedstrijd.getId(), reeks.getId(), true);
+        //LocalDB.setReadyState(competition.getId(), course.getId(), true);
     }
 }

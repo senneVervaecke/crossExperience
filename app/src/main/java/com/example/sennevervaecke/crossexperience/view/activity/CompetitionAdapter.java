@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.sennevervaecke.crossexperience.R;
-import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
+import com.example.sennevervaecke.crossexperience.model.Competition;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,47 +17,47 @@ import java.util.Calendar;
  * Created by sennevervaecke on 11/22/2017.
  */
 
-public class WedstrijdAdapter extends BaseAdapter {
+public class CompetitionAdapter extends BaseAdapter {
 
-    private ArrayList<Wedstrijd> wedstrijden;
+    private ArrayList<Competition> competitions;
     private Context context;
     private LayoutInflater inflater;
 
-    public WedstrijdAdapter(Context context, ArrayList<Wedstrijd> wedstrijden){
+    public CompetitionAdapter(Context context, ArrayList<Competition> competitions){
         this.context = context;
-        this.wedstrijden = wedstrijden;
+        this.competitions = competitions;
         inflater = LayoutInflater.from(this.context);
     }
 
 
     @Override
     public int getCount() {
-        return wedstrijden.size();
+        return competitions.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return wedstrijden.get(i);
+        return competitions.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        return wedstrijden.get(i).getId();
+        return competitions.get(i).getId();
     }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflater.inflate(R.layout.wedstrijd_listview, null);
         TextView naam = view.findViewById(R.id.wedstrijdNaam);
-        naam.setText(wedstrijden.get(i).getNaam());
+        naam.setText(competitions.get(i).getName());
 
         TextView datum = view.findViewById(R.id.wedstrijdDatum);
-        datum.setText(wedstrijden.get(i).getStartDatum().get(Calendar.DAY_OF_MONTH) + "/" +
-                wedstrijden.get(i).getStartDatum().get(Calendar.MONTH) + "/" +
-                wedstrijden.get(i).getStartDatum().get(Calendar.YEAR) + " - " +
-                wedstrijden.get(i).getEindDatum().get(Calendar.DAY_OF_MONTH) + "/" +
-                wedstrijden.get(i).getEindDatum().get(Calendar.MONTH) + "/" +
-                wedstrijden.get(i).getEindDatum().get(Calendar.YEAR));
+        datum.setText(competitions.get(i).getStartDate().get(Calendar.DAY_OF_MONTH) + "/" +
+                competitions.get(i).getStartDate().get(Calendar.MONTH) + "/" +
+                competitions.get(i).getStartDate().get(Calendar.YEAR) + " - " +
+                competitions.get(i).getEndDate().get(Calendar.DAY_OF_MONTH) + "/" +
+                competitions.get(i).getEndDate().get(Calendar.MONTH) + "/" +
+                competitions.get(i).getEndDate().get(Calendar.YEAR));
         return view;
     }
 }

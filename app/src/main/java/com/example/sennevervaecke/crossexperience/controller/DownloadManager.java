@@ -1,17 +1,15 @@
 package com.example.sennevervaecke.crossexperience.controller;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.sennevervaecke.crossexperience.model.Reeks;
-import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
+import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.Course;
 
 import java.util.ArrayList;
 
@@ -20,29 +18,29 @@ import java.util.ArrayList;
  */
 
 public class DownloadManager extends Service{
-    private DownloadWedstrijdFile downloadWedstrijdFile;
-    private ArrayList<DownloadWedstrijdFile> queue;
+    private DownloadCompetitionTask downloadCompetitionTask;
+    private ArrayList<DownloadCompetitionTask> queue;
     private Handler handler;
     private final IBinder binder = new DownloadBinder();
 
-    public void startDownload(Wedstrijd wedstrijd, Reeks reeks){
-        if(downloadWedstrijdFile == null) {
+    public void startDownload(Competition competition, Course course){
+        if(downloadCompetitionTask == null) {
             Log.e("service", "execute download task");
-            downloadWedstrijdFile = new DownloadWedstrijdFile(getApplicationContext(), handler, wedstrijd, reeks, ".mp4");
-            downloadWedstrijdFile.execute();
+            downloadCompetitionTask = new DownloadCompetitionTask(getApplicationContext(), handler, competition, course, ".mp4");
+            downloadCompetitionTask.execute();
         }
         else{
             boolean isStarted = false;
-            if(wedstrijd.equals(downloadWedstrijdFile.getWedstrijd()) && reeks.equals(downloadWedstrijdFile.getReeks())) {
+            if(competition.equals(downloadCompetitionTask.getCompetition()) && course.equals(downloadCompetitionTask.getCourse())) {
                 isStarted = true;
             }
             for(int i = 0; i < queue.size(); i++){
-                if(wedstrijd.equals(queue.get(i).getWedstrijd()) && reeks.equals(queue.get(i).getReeks())){
+                if(competition.equals(queue.get(i).getCompetition()) && course.equals(queue.get(i).getCourse())){
                     isStarted = true;
                 }
             }
             if(!isStarted) {
-                queue.add(new DownloadWedstrijdFile(getApplicationContext(), handler, wedstrijd, reeks, ".mp4"));
+                queue.add(new DownloadCompetitionTask(getApplicationContext(), handler, competition, course, ".mp4"));
             }
         }
     }
@@ -61,24 +59,24 @@ public class DownloadManager extends Service{
     }
     public void setHandler(Handler handler){
         this.handler = handler;
-        if(downloadWedstrijdFile != null) {
-            downloadWedstrijdFile.setHandler(handler);
+        if(downloadCompetitionTask != null) {
+            downloadCompetitionTask.setHandler(handler);
         }
     }
 
     public Handler getHandler(){
-        if(downloadWedstrijdFile != null) {
-            return downloadWedstrijdFile.getHandler();
+        if(downloadCompetitionTask != null) {
+            return downloadCompetitionTask.getHandler();
         }
         return handler;
     }
     public void finishDownload(){
         if(queue.size() == 0){
-            downloadWedstrijdFile = null;
+            downloadCompetitionTask = null;
             return;
         }
-        downloadWedstrijdFile = queue.remove(0);
-        downloadWedstrijdFile.execute();
+        downloadCompetitionTask = queue.remove(0);
+        downloadCompetitionTask.execute();
     }
     public class DownloadBinder extends Binder {
         public DownloadManager getService(){

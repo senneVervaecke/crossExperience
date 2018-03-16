@@ -9,34 +9,33 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sennevervaecke.crossexperience.R;
-import com.example.sennevervaecke.crossexperience.model.Reeks;
-
+import com.example.sennevervaecke.crossexperience.model.Course;
 import java.util.ArrayList;
 
 /**
  * Created by sennevervaecke on 11/22/2017.
  */
 
-public class ReeksAdapter extends BaseAdapter {
+public class CourseAdapter extends BaseAdapter {
 
-    private ArrayList<Reeks> reeksen;
+    private ArrayList<Course> courses;
     private Context context;
     private LayoutInflater inflater;
 
-    public ReeksAdapter(Context context, ArrayList<Reeks> reeksen){
-        this.reeksen = reeksen;
+    public CourseAdapter(Context context, ArrayList<Course> courses){
+        this.courses = courses;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return reeksen.size();
+        return courses.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return reeksen.get(i);
+        return courses.get(i);
     }
 
     @Override
@@ -47,11 +46,11 @@ public class ReeksAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflater.inflate(R.layout.reeks_listview, null);
-        TextView niveau = view.findViewById(R.id.reeksNaam);
-        niveau.setText(reeksen.get(i).getNiveau());
+        TextView level = view.findViewById(R.id.reeksNaam);
+        level.setText(courses.get(i).getLevel());
 
         ImageView image = view.findViewById(R.id.videoStaatImg);
-        if(reeksen.get(i).isReadyState()){
+        if(courses.get(i).isReadyState()){
             image.setImageResource(R.drawable.play);
         }
         else{

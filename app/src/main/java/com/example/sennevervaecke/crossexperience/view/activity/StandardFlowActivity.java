@@ -16,21 +16,23 @@ import android.view.MenuItem;
 import com.example.sennevervaecke.crossexperience.R;
 import com.example.sennevervaecke.crossexperience.controller.DownloadManager;
 import com.example.sennevervaecke.crossexperience.controller.DownloadMonitor;
-import com.example.sennevervaecke.crossexperience.controller.interfaces.ReeksFragmentCom;
-import com.example.sennevervaecke.crossexperience.controller.interfaces.WedstrijdFragmentCom;
-import com.example.sennevervaecke.crossexperience.model.LocalDB;
-import com.example.sennevervaecke.crossexperience.model.Reeks;
-import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
+import com.example.sennevervaecke.crossexperience.controller.interfaces.CompetitionFragmentCom;
+import com.example.sennevervaecke.crossexperience.controller.interfaces.CourseFragmentCom;
+import com.example.sennevervaecke.crossexperience.model.Course;
+import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.database.Database;
+import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
+import com.example.sennevervaecke.crossexperience.view.fragment.CompetitionFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.PlayerFragment;
-import com.example.sennevervaecke.crossexperience.view.fragment.ReeksFragment;
-import com.example.sennevervaecke.crossexperience.view.fragment.WedstrijdFragment;
+import com.example.sennevervaecke.crossexperience.view.fragment.CourseFragment;
 
-public class StandardFlowActivity extends AppCompatActivity implements WedstrijdFragmentCom, ReeksFragmentCom{
+public class StandardFlowActivity extends AppCompatActivity implements CompetitionFragmentCom, CourseFragmentCom {
 
-    private WedstrijdFragment wedstrijdFragment;
-    private ReeksFragment reeksFragment;
+    private CompetitionFragment competitionFragment;
+    private CourseFragment courseFragment;
     private PlayerFragment playerFragment;
     private DownloadFragment downloadFragment;
+    private DatabaseHelper databaseHelper;
 
     private DownloadManager downloadManager;
     private ServiceConnection connection = new ServiceConnection() {
@@ -58,7 +60,7 @@ public class StandardFlowActivity extends AppCompatActivity implements Wedstrijd
             else if(msg.what == DownloadMonitor.END){
                 downloadManager.finishDownload();
                 getSupportFragmentManager().beginTransaction().remove(downloadFragment).commit();
-                reeksFragment.refresh();
+                courseFragment.refresh();
             }
         }
     };
@@ -68,55 +70,56 @@ public class StandardFlowActivity extends AppCompatActivity implements Wedstrijd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_standard_flow);
 
-        LocalDB.fill();
+        databaseHelper = new DatabaseHelper(getApplicationContext());
+        //databaseHelper.fill();
 
         Intent serviceIntent = new Intent(this, DownloadManager.class);
         startService(serviceIntent);
         bindService(serviceIntent, connection, getApplicationContext().BIND_AUTO_CREATE);
 
-        wedstrijdFragment = new WedstrijdFragment();
-        reeksFragment = new ReeksFragment();
+        competitionFragment = new CompetitionFragment();
+        courseFragment = new CourseFragment();
         playerFragment = new PlayerFragment();
         downloadFragment = new DownloadFragment();
 
-        startWedstrijdFragment();
+        startCompetitionFragment();
     }
 
     @Override
-    public void onWedstrijdItemClick(Wedstrijd wedstrijd){
-        startReeksFragment(wedstrijd);
+    public void onCompetitionItemClick(Competition competition){
+        startCourseFragment(competition);
     }
     @Override
-    public void onReeksItemClick(Wedstrijd wedstrijd, Reeks reeks) {
-        if(reeks.isReadyState()) {
-            startPlayerFragment(wedstrijd, reeks);
+    public void onCourseItemClick(Competition competition, Course course) {
+        if(course.isReadyState()) {
+            startPlayerFragment(competition, course);
         }else{
             if(downloadManager != null){
-                downloadManager.startDownload(wedstrijd, reeks);
+                downloadManager.startDownload(competition, course);
             }
         }
     }
 
-    public void startWedstrijdFragment(){
+    public void startCompetitionFragment(){
         getSupportActionBar().setTitle("crossExperience");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, wedstrijdFragment, "wedstrijd").commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, competitionFragment, "wedstrijd").commit();
     }
 
-    public void startReeksFragment(Wedstrijd wedstrijd){
-        getSupportActionBar().setTitle(wedstrijd.getNaam());
+    public void startCourseFragment(Competition competition){
+        getSupportActionBar().setTitle(competition.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        reeksFragment.setWedstrijd(wedstrijd);
+        courseFragment.setCompetition(competition);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.standardFlowBaseContainer, reeksFragment, "reeks");
+        transaction.replace(R.id.standardFlowBaseContainer, courseFragment, "reeks");
         transaction.commit();
     }
 
-    public void startPlayerFragment(Wedstrijd wedstrijd, Reeks reeks){
-        getSupportActionBar().setTitle(wedstrijd.getNaam() + " " + reeks.getNiveau());
+    public void startPlayerFragment(Competition competition, Course course){
+        getSupportActionBar().setTitle(competition.getName() + " " + course.getLevel());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        playerFragment.setWedstrijd(wedstrijd);
-        playerFragment.setReeks(reeks);
+        playerFragment.setCompetition(competition);
+        playerFragment.setCourse(course);
         getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, playerFragment, "player").commit();
     }
 
@@ -128,14 +131,14 @@ public class StandardFlowActivity extends AppCompatActivity implements Wedstrijd
             //check if current fragment is reeks
             fragment = fragmentManager.findFragmentByTag("reeks");
             if(fragment != null && fragment.isVisible()){
-                startWedstrijdFragment();
+                startCompetitionFragment();
                 return super.onOptionsItemSelected(item);
             }
             //check if current fragment is player
             fragment = fragmentManager.findFragmentByTag("player");
             if(fragment != null && fragment.isVisible()){
                 PlayerFragment playerFragment = (PlayerFragment) fragment;
-                startReeksFragment(playerFragment.getWedstrijd());
+                startCourseFragment(playerFragment.getCompetition());
                 return super.onOptionsItemSelected(item);
             }
         }

@@ -1,6 +1,5 @@
 package com.example.sennevervaecke.crossexperience.view.fragment;
 
-import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,9 +12,8 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.example.sennevervaecke.crossexperience.R;
-import com.example.sennevervaecke.crossexperience.model.Reeks;
-import com.example.sennevervaecke.crossexperience.model.Wedstrijd;
-import com.example.sennevervaecke.crossexperience.view.activity.PlayerActivity;
+import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.Course;
 
 public class PlayerFragment extends Fragment {
 
@@ -23,28 +21,28 @@ public class PlayerFragment extends Fragment {
     private MediaController mediaController;
     int position;
 
-    private Wedstrijd wedstrijd;
-    private Reeks reeks;
+    private Competition competition;
+    private Course course;
 
     public PlayerFragment() {
         position = 0;
         // Required empty public constructor
     }
 
-    public Wedstrijd getWedstrijd() {
-        return wedstrijd;
+    public Competition getCompetition() {
+        return competition;
     }
 
-    public void setWedstrijd(Wedstrijd wedstrijd) {
-        this.wedstrijd = wedstrijd;
+    public void setCompetition(Competition competition) {
+        this.competition = competition;
     }
 
-    public Reeks getReeks() {
-        return reeks;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setReeks(Reeks reeks) {
-        this.reeks = reeks;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     @Override
@@ -80,17 +78,17 @@ public class PlayerFragment extends Fragment {
                 });
             }
         });
-        if(reeks != null && wedstrijd != null) {
+        if(course != null && competition != null) {
             setVideoURI();
         } else {
-            Log.e("PlayerFragment", "oops, did you forget to set reeks and wedstrijd?");
+            Log.e("PlayerFragment", "oops, did you forget to set course and competition?");
         }
 
         return view;
     }
     public void setVideoURI(){
         try {
-            videoView.setVideoURI(Uri.parse(getContext().getFilesDir() + "/" + wedstrijd.getNaam() + "_" + reeks.getNiveau() + ".mp4"));
+            videoView.setVideoURI(Uri.parse(getContext().getFilesDir() + "/" + competition.getName() + "_" + course.getLevel() + ".mp4"));
         } catch (Exception e) {
             e.printStackTrace();
         }
