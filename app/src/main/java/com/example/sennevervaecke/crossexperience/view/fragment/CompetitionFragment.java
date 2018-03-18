@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.sennevervaecke.crossexperience.R;
-import com.example.sennevervaecke.crossexperience.controller.interfaces.CompetitionFragmentCom;
+import com.example.sennevervaecke.crossexperience.model.interfaces.CompetitionFragmentCom;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
 import com.example.sennevervaecke.crossexperience.view.activity.CompetitionAdapter;

@@ -19,6 +19,9 @@ public interface CompetitionDAO {
     @Query("SELECT * FROM competition;")
     public List<CompetitionEntity> getAll();
 
+    @Query("DELETE FROM competition")
+    public void nuke();
+
     @Insert
     public void insert(CompetitionEntity...competitionEntities);
 }

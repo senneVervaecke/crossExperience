@@ -11,20 +11,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.sennevervaecke.crossexperience.R;
 import com.example.sennevervaecke.crossexperience.controller.DownloadManager;
 import com.example.sennevervaecke.crossexperience.controller.DownloadMonitor;
-import com.example.sennevervaecke.crossexperience.controller.interfaces.CompetitionFragmentCom;
-import com.example.sennevervaecke.crossexperience.controller.interfaces.CourseFragmentCom;
+import com.example.sennevervaecke.crossexperience.controller.UpdateDatabaseTask;
+import com.example.sennevervaecke.crossexperience.model.interfaces.CompetitionFragmentCom;
+import com.example.sennevervaecke.crossexperience.model.interfaces.CourseFragmentCom;
 import com.example.sennevervaecke.crossexperience.model.Course;
 import com.example.sennevervaecke.crossexperience.model.Competition;
-import com.example.sennevervaecke.crossexperience.model.database.Database;
 import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
 import com.example.sennevervaecke.crossexperience.view.fragment.CompetitionFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.PlayerFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.CourseFragment;
+
+import java.util.concurrent.ExecutionException;
 
 public class StandardFlowActivity extends AppCompatActivity implements CompetitionFragmentCom, CourseFragmentCom {
 
@@ -70,8 +73,18 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_standard_flow);
 
-        databaseHelper = new DatabaseHelper(getApplicationContext());
-        //databaseHelper.fill();
+        UpdateDatabaseTask updateDatabaseTask = new UpdateDatabaseTask(getApplicationContext());
+        try {
+            String result = updateDatabaseTask.execute().get();
+            Log.e("test", result);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        //databaseHelper = new DatabaseHelper(getApplicationContext());
+        //databaseHelper.fillWithTest();
 
         Intent serviceIntent = new Intent(this, DownloadManager.class);
         startService(serviceIntent);
@@ -91,7 +104,7 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
     }
     @Override
     public void onCourseItemClick(Competition competition, Course course) {
-        if(course.isReadyState()) {
+        if(databaseHelper.checkReadyState(competition, course, "mp4")) {
             startPlayerFragment(competition, course);
         }else{
             if(downloadManager != null){
@@ -144,6 +157,5 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
 

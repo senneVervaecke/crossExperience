@@ -22,6 +22,9 @@ public interface CourseDAO {
     @Query("SELECT * FROM course WHERE competitionId = :competitionId;")
     public List<CourseEntity> getByCompetitionId(int competitionId);
 
+    @Query("DELETE FROM course")
+    public void nuke();
+
     @Insert
     public void insert(CourseEntity...courseEntities);
 }

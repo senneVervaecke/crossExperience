@@ -20,6 +20,9 @@ public interface AdressDAO {
     @Query("SELECT * FROM adress;")
     public List<Adress> getAll();
 
+    @Query("DELETE FROM adress")
+    public void nuke();
+
     @Insert
     public void insert(Adress...adress);
 }

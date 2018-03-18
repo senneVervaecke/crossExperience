@@ -81,4 +81,7 @@ public class CompetitionEntity {
         this.endDate = endDate;
     }
 
+    public static CompetitionEntity fromJson(String json){
+        return null;
+    }
 }

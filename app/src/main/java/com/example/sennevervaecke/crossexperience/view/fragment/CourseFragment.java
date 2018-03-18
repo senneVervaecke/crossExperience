@@ -11,8 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.sennevervaecke.crossexperience.R;
-import com.example.sennevervaecke.crossexperience.controller.interfaces.CourseFragmentCom;
+import com.example.sennevervaecke.crossexperience.model.interfaces.CourseFragmentCom;
 import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.Course;
 import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
 import com.example.sennevervaecke.crossexperience.view.activity.CourseAdapter;
 
@@ -34,9 +35,17 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
         this.competition = competition;
     }
 
+    public void updateCoursesReadyStates(Competition competition){
+        if(databaseHelper != null && competition != null) {
+            for (Course course : competition.getCourses()) {
+                course.setReadyState(databaseHelper.checkReadyState(competition, course, ".mp4"));
+            }
+        }
+    }
+
     public void refresh(){
-        if(this.isAdded() && competition != null){
-            //competition = null;
+        if(this.isAdded() && competition != null && databaseHelper != null){
+            updateCoursesReadyStates(competition);
             ListView listView = getView().findViewById(R.id.reeksListView);
             CourseAdapter adapter = new CourseAdapter(getContext(), competition.getCourses());
             listView.setAdapter(adapter);
@@ -51,9 +60,11 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        databaseHelper = new DatabaseHelper(getContext());
         View view = inflater.inflate(R.layout.fragment_reeks, container, false);
         ListView listView = view.findViewById(R.id.reeksListView);
         if(competition != null) {
+            updateCoursesReadyStates(competition);
             CourseAdapter adapter = new CourseAdapter(getContext(), competition.getCourses());
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(this);

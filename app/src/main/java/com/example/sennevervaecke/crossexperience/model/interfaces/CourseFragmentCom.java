@@ -1,4 +1,4 @@
-package com.example.sennevervaecke.crossexperience.controller.interfaces;
+package com.example.sennevervaecke.crossexperience.model.interfaces;
 
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.Course;

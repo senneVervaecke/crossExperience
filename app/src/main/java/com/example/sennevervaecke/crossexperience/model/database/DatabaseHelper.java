@@ -6,6 +6,7 @@ import com.example.sennevervaecke.crossexperience.model.Adress;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.Course;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,11 +19,15 @@ import java.util.List;
 
 public class DatabaseHelper {
     private Database db;
+    private Context context;
 
     public DatabaseHelper(Context context){
+        this.context = context;
         db = Database.getAppDatabase(context);
     }
-    public void fill(){
+    public void fillWithTest(){
+        nukeAll();
+
         db.adressDAO().insert(new Adress(1, "belgie", "waregem", 4520, "koersstraat", 45));
 
         db.competitionDAO().insert(new CompetitionEntity(1, "waregem", 1, new Date(), new Date()),
@@ -32,6 +37,18 @@ public class DatabaseHelper {
                 new CourseEntity(2, "zwaar", 1600, 550, 1),
                 new CourseEntity(3, "midden", 2100, 520, 2),
                 new CourseEntity(4, "zwaar", 2300, 550, 2));
+    }
+    public void fill(ArrayList<CompetitionEntity> competitionEntities, ArrayList<CourseEntity> courseEntities, ArrayList<Adress> adresses){
+        nukeAll();
+
+        db.adressDAO().insert(adresses.toArray(new Adress[]{}));
+        db.competitionDAO().insert(competitionEntities.toArray(new CompetitionEntity[]{}));
+        db.courseDAO().insert(courseEntities.toArray(new CourseEntity[]{}));
+    }
+    private void nukeAll(){
+        db.adressDAO().nuke();
+        db.courseDAO().nuke();
+        db.competitionDAO().nuke();
     }
 
     public Competition getCompetition(int id){
@@ -64,6 +81,13 @@ public class DatabaseHelper {
             competitions.add(competition);
         }
         return competitions;
+    }
+
+    public boolean checkReadyState(Competition competition, Course course, String fileExtension){
+        //if necesary check if download in progress
+        File file = new File(context.getFilesDir() + "/" + competition.getName() + "_" + course.getLevel() + ".mp4");
+        boolean exist = file.exists();
+        return exist;
     }
 
 }
