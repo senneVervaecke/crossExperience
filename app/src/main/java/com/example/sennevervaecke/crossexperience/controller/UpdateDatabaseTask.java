@@ -21,7 +21,7 @@ import java.util.ArrayList;
  */
 
 public class UpdateDatabaseTask extends AsyncTask<Void, Void, String> {
-    private final String baseUrl = "http://192.168.1.130/cross_experience_api/api.php";
+    private final String baseUrl = "http://www.alsingen.be/cross_experience_api/api.php";
     private Context context;
 
     private ArrayList<CompetitionEntity> competitions;
@@ -76,6 +76,7 @@ public class UpdateDatabaseTask extends AsyncTask<Void, Void, String> {
         }
         return null;
     }
+
     private ArrayList<CourseEntity> getCourseByCompetitionId(int competitionId){
         String result = "";
         try {
@@ -103,6 +104,7 @@ public class UpdateDatabaseTask extends AsyncTask<Void, Void, String> {
         }
         return null;
     }
+
     private Adress getAdress(int id){
         String result = "";
         try {

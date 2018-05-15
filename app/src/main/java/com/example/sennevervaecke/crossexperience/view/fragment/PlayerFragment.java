@@ -76,6 +76,13 @@ public class PlayerFragment extends Fragment {
                         mediaController.setAnchorView(videoView);
                     }
                 });
+
+                mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                    @Override
+                    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                        return false;
+                    }
+                });
             }
         });
         if(course != null && competition != null) {

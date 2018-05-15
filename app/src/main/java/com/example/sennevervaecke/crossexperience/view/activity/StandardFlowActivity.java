@@ -1,6 +1,7 @@
 package com.example.sennevervaecke.crossexperience.view.activity;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
@@ -15,8 +16,10 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.controller.DownloadCompetitionTask;
 import com.example.sennevervaecke.crossexperience.controller.DownloadManager;
 import com.example.sennevervaecke.crossexperience.controller.DownloadMonitor;
+import com.example.sennevervaecke.crossexperience.controller.Helper;
 import com.example.sennevervaecke.crossexperience.controller.UpdateDatabaseTask;
 import com.example.sennevervaecke.crossexperience.model.interfaces.CompetitionFragmentCom;
 import com.example.sennevervaecke.crossexperience.model.interfaces.CourseFragmentCom;
@@ -64,6 +67,8 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
                 downloadManager.finishDownload();
                 getSupportFragmentManager().beginTransaction().remove(downloadFragment).commit();
                 courseFragment.refresh();
+            } else if(msg.what == DownloadCompetitionTask.ERROR){
+                Helper.showMessage(findViewById(R.id.standardFlowRoot), "there was an error downloading the video.");
             }
         }
     };
@@ -74,6 +79,7 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         setContentView(R.layout.activity_standard_flow);
 
         UpdateDatabaseTask updateDatabaseTask = new UpdateDatabaseTask(getApplicationContext());
+        //TODO: make happen async
         try {
             String result = updateDatabaseTask.execute().get();
             Log.e("test", result);
@@ -83,12 +89,11 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
             e.printStackTrace();
         }
 
-        //databaseHelper = new DatabaseHelper(getApplicationContext());
-        //databaseHelper.fillWithTest();
+        databaseHelper = new DatabaseHelper(getApplicationContext());
 
         Intent serviceIntent = new Intent(this, DownloadManager.class);
         startService(serviceIntent);
-        bindService(serviceIntent, connection, getApplicationContext().BIND_AUTO_CREATE);
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
 
         competitionFragment = new CompetitionFragment();
         courseFragment = new CourseFragment();
@@ -107,8 +112,11 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         if(databaseHelper.checkReadyState(competition, course, "mp4")) {
             startPlayerFragment(competition, course);
         }else{
-            if(downloadManager != null){
+            if(downloadManager != null && Helper.isInternetConnected(this)){
                 downloadManager.startDownload(competition, course);
+            }
+            else{
+                Helper.showMessage(findViewById(R.id.standardFlowRoot), "there is no internet connection");
             }
         }
     }

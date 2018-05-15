@@ -24,6 +24,8 @@ import java.io.OutputStream;
  */
 public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
 
+    public static final int ERROR = 666;
+
     private Context context;
     private Session session = null;
     private ChannelSftp channel = null;
@@ -34,13 +36,13 @@ public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
     private Competition competition;
     private Course course;
 
-    private static final String HOST = "10.3.50.40";
-    private final String USERNAME = "appuser";
-    private final String PASSWORD = "crossexp";
+    private static final String HOST = "ssh.alsingen.be";
+    private final String USERNAME = "alsingen.be";
+    private final String PASSWORD = "crossExp2018";
 
     public DownloadCompetitionTask(Context context, Handler handler, Competition competition, Course course, String fileType){
         this.context = context;
-        this.path = "/crossexperience/wedstrijden/" + competition.getName() + "/" + course.getLevel() + fileType;
+        this.path = "competitions/" + competition.getName().toLowerCase() + "/" + course.getLevel().toLowerCase() + fileType;
         this.fileName = competition.getName() + "_" +  course.getLevel() + fileType;
 
         this.competition = competition;
@@ -55,6 +57,7 @@ public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void ... voids) {
+        File downloadFile = new File(context.getFilesDir(), fileName);
         try {
             session = ssh.getSession(USERNAME, HOST, 22);
             session.setPassword(PASSWORD);
@@ -63,18 +66,15 @@ public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
             session.connect();
 
             String remoteFile = path;
-            File downloadFile = new File(context.getFilesDir(), fileName);
             OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
 
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
             channel.get(remoteFile, outputStream, new DownloadMonitor(handler));
 
-        } catch (JSchException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (SftpException e) {
+        } catch (JSchException | FileNotFoundException | SftpException e) {
+            downloadFile.delete();
+            Message.obtain(handler, ERROR).sendToTarget();
             e.printStackTrace();
         }
         return null;
@@ -98,8 +98,6 @@ public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        //replace this to DownloadMonitor maybe ???
         Message.obtain(handler, DownloadMonitor.END).sendToTarget();
-        //LocalDB.setReadyState(competition.getId(), course.getId(), true);
     }
 }
