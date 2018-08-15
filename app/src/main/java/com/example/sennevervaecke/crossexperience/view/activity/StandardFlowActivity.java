@@ -27,8 +27,10 @@ import com.example.sennevervaecke.crossexperience.model.Course;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
 import com.example.sennevervaecke.crossexperience.view.fragment.CompetitionFragment;
+import com.example.sennevervaecke.crossexperience.view.fragment.OrionPlayerFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.PlayerFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.CourseFragment;
+import com.example.sennevervaecke.crossexperience.view.fragment.SettingsFragment;
 
 import java.util.concurrent.ExecutionException;
 
@@ -38,6 +40,8 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
     private CourseFragment courseFragment;
     private PlayerFragment playerFragment;
     private DownloadFragment downloadFragment;
+    private SettingsFragment settingsFragment;
+    private OrionPlayerFragment orionPlayerFragment;
     private DatabaseHelper databaseHelper;
 
     private DownloadManager downloadManager;
@@ -99,7 +103,10 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         courseFragment = new CourseFragment();
         playerFragment = new PlayerFragment();
         downloadFragment = new DownloadFragment();
+        settingsFragment = new SettingsFragment();
+        orionPlayerFragment = new OrionPlayerFragment();
 
+        //startSettingsFragment();
         startCompetitionFragment();
     }
 
@@ -109,8 +116,10 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
     }
     @Override
     public void onCourseItemClick(Competition competition, Course course) {
-        if(databaseHelper.checkReadyState(competition, course, "mp4")) {
-            startPlayerFragment(competition, course);
+        if(databaseHelper.checkReadyState(competition, course, ".mp4")) {
+            //TODO something
+            //startPlayerFragment(competition, course);
+            startOrionPlayerFragment(competition, course);
         }else{
             if(downloadManager != null && Helper.isInternetConnected(this)){
                 downloadManager.startDownload(competition, course);
@@ -136,12 +145,23 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         transaction.commit();
     }
 
+    public void startOrionPlayerFragment(Competition competition, Course course){
+        getSupportActionBar().setTitle(competition.getName() + " " + course.getLevel());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        orionPlayerFragment.set(competition, course);
+        getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, orionPlayerFragment, "orionPlayer").commit();
+    }
+
     public void startPlayerFragment(Competition competition, Course course){
         getSupportActionBar().setTitle(competition.getName() + " " + course.getLevel());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         playerFragment.setCompetition(competition);
         playerFragment.setCourse(course);
         getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, playerFragment, "player").commit();
+    }
+
+    public void startSettingsFragment(){
+        getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, settingsFragment, "settings").commit();
     }
 
     @Override
@@ -160,6 +180,13 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
             if(fragment != null && fragment.isVisible()){
                 PlayerFragment playerFragment = (PlayerFragment) fragment;
                 startCourseFragment(playerFragment.getCompetition());
+                return super.onOptionsItemSelected(item);
+            }
+            //check if current fragment is orion player
+            fragment = fragmentManager.findFragmentByTag("orionPlayer");
+            if(fragment != null && fragment.isVisible()){
+                OrionPlayerFragment orionPlayerFragment = (OrionPlayerFragment) fragment;
+                startCourseFragment(orionPlayerFragment.getCompetition());
                 return super.onOptionsItemSelected(item);
             }
         }

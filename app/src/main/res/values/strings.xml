@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">crossExperience</string>
+    <string name="pref_sync">sync</string>
+    <string name="pref_sync_summ">sync data</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -85,7 +85,7 @@ public class DatabaseHelper {
 
     public boolean checkReadyState(Competition competition, Course course, String fileExtension){
         //if necesary check if download in progress
-        File file = new File(context.getFilesDir() + "/" + competition.getName() + "_" + course.getLevel() + ".mp4");
+        File file = new File(context.getFilesDir() + "/" + competition.getName() + "_" + course.getLevel() + fileExtension);
         boolean exist = file.exists();
         return exist;
     }
