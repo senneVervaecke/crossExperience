@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -26,6 +27,7 @@ dependencies {
     implementation 'android.arch.persistence.room:runtime:1.0.0'
     implementation 'fi.finwe.orion360:orion360-sdk-basic:1.2.08'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.android.support:support-vector-drawable:26.1.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
     implementation 'com.google.code.gson:gson:2.8.2'
     testImplementation 'junit:junit:4.12'

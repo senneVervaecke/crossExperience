@@ -1,8 +1,22 @@
 <resources>
     <string name="app_name">crossExperience</string>
-    <string name="pref_sync">sync</string>
-    <string name="pref_sync_summ">sync data</string>
+    <string name="title_activity_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_videotype_title">Videoplayer type</string>
+
+    <string-array name="pref_videotype">
+        <item>Video</item>
+        <item>360°</item>
+    </string-array>
+    <string-array name="pref_videotype_value">
+        <item>VIDEO</item>
+        <item>ORION</item>
+    </string-array>
+
+    <string name="pref_header_data">Data</string>
+    <string name="pref_header_notifications">Notifications</string>
+    <string name="settings">Settings</string>
 </resources>

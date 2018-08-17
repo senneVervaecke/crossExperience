@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.controller.Helper;
 import com.example.sennevervaecke.crossexperience.model.Course;
 import java.util.ArrayList;
 
@@ -47,7 +48,7 @@ public class CourseAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflater.inflate(R.layout.reeks_listview, null);
         TextView level = view.findViewById(R.id.reeksNaam);
-        level.setText(courses.get(i).getLevel());
+        level.setText(Helper.toCamelCase(courses.get(i).getLevel()));
 
         ImageView image = view.findViewById(R.id.videoStaatImg);
         if(courses.get(i).isReadyState()){

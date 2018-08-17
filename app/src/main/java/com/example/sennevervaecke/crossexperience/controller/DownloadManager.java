@@ -22,11 +22,12 @@ public class DownloadManager extends Service{
     private ArrayList<DownloadCompetitionTask> queue;
     private Handler handler;
     private final IBinder binder = new DownloadBinder();
+    public static boolean isActive = false;
 
-    public void startDownload(Competition competition, Course course){
+    public void startDownload(Competition competition, Course course, String extension){
         if(downloadCompetitionTask == null) {
             Log.e("service", "execute download task");
-            downloadCompetitionTask = new DownloadCompetitionTask(getApplicationContext(), handler, competition, course, ".mp4");
+            downloadCompetitionTask = new DownloadCompetitionTask(getApplicationContext(), handler, competition, course, extension);
             downloadCompetitionTask.execute();
         }
         else{
@@ -47,8 +48,15 @@ public class DownloadManager extends Service{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        isActive = true;
         queue = new ArrayList<>();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        isActive = false;
+        super.onDestroy();
     }
 
     @Nullable

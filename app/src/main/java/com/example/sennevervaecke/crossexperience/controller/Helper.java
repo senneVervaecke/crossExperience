@@ -42,6 +42,9 @@ public class Helper {
         showMessage(view, message, ALIGN_TOP);
     }
     public static void showMessage(View view, String message, String alignment){
+        makeSnackbar(view, message, alignment).show();
+    }
+    public static Snackbar makeSnackbar(View view, String message, String alignment){
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View snackbarView = snackbar.getView();
         TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
@@ -59,6 +62,29 @@ public class Helper {
             layout.gravity = Gravity.BOTTOM;
         }
         snackbarView.setLayoutParams(layout);
-        snackbar.show();
+        return snackbar;
+    }
+    public static String firstToUpper(String value){
+        if(value == null){
+            return null;
+        }
+        if(value.length() == 0){
+            return "";
+        }
+        if(value.length() == 1){
+            return value.toUpperCase();
+        }
+        return value.substring(0, 1).toUpperCase() + value.substring(1, value.length());
+    }
+    public static String toCamelCase(String value){
+        if(value == null){
+            return null;
+        }
+        String[] splittedValue = value.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for(String split : splittedValue){
+            builder.append(firstToUpper(split));
+        }
+        return builder.toString();
     }
 }

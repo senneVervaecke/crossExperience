@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.controller.Helper;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class CompetitionAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflater.inflate(R.layout.wedstrijd_listview, null);
         TextView naam = view.findViewById(R.id.wedstrijdNaam);
-        naam.setText(competitions.get(i).getName());
+        naam.setText(Helper.toCamelCase(competitions.get(i).getName()));
 
         TextView datum = view.findViewById(R.id.wedstrijdDatum);
         datum.setText(competitions.get(i).getStartDate().get(Calendar.DAY_OF_MONTH) + "/" +

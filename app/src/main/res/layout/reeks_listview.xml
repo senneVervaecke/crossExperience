@@ -8,19 +8,22 @@
 
     <TextView
         android:id="@+id/reeksNaam"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:includeFontPadding="false"
-        android:text="reeks1"
+        android:text=""
         android:textSize="24sp"
         tools:includeFontPadding="false"
         tools:paddingHorizontal="20dp"
-        tools:paddingVertical="5dp" />
+        tools:paddingVertical="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical" />
 
     <ImageView
         android:id="@+id/videoStaatImg"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         app:srcCompat="@android:drawable/btn_star" />

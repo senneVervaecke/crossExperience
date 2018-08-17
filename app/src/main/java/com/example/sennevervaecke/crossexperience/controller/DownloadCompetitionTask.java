@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.Course;
@@ -25,6 +26,8 @@ import java.io.OutputStream;
 public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
 
     public static final int ERROR = 666;
+    public static final int NOFILE = 667;
+    public static final int NO360FILE = 668;
 
     private Context context;
     private Session session = null;
@@ -32,6 +35,7 @@ public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
     private JSch ssh = null;
     private String path;
     private String fileName;
+    private String fileType;
     private Handler handler;
     private Competition competition;
     private Course course;
@@ -44,6 +48,7 @@ public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
         this.context = context;
         this.path = "competitions/" + competition.getName().toLowerCase() + "/" + course.getLevel().toLowerCase() + fileType;
         this.fileName = competition.getName() + "_" +  course.getLevel() + fileType;
+        this.fileType = fileType;
 
         this.competition = competition;
         this.course = course;
@@ -72,9 +77,19 @@ public class DownloadCompetitionTask extends AsyncTask<Void, Void, Void> {
             channel.connect();
             channel.get(remoteFile, outputStream, new DownloadMonitor(handler));
 
-        } catch (JSchException | FileNotFoundException | SftpException e) {
+        } catch (SftpException e) {
             downloadFile.delete();
-            Message.obtain(handler, ERROR).sendToTarget();
+            if(e.id == 2) {
+                if (fileType.equals(".mp4")) {
+                    Message.obtain(handler, NOFILE).sendToTarget();
+                } else if (fileType.equals("360.mp4")) {
+                    Message.obtain(handler, NO360FILE, course.getId(), 0, competition).sendToTarget();
+                }
+            } else {
+                Message.obtain(handler, ERROR).sendToTarget();
+            }
+        } catch (FileNotFoundException | JSchException e){
+            downloadFile.delete();
             e.printStackTrace();
         }
         return null;
