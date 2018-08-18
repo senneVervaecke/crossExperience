@@ -11,14 +11,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.sennevervaecke.crossexperience.R;
+import com.example.sennevervaecke.crossexperience.model.Constant;
 import com.example.sennevervaecke.crossexperience.model.interfaces.CourseFragmentCom;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.Course;
 import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
 import com.example.sennevervaecke.crossexperience.view.activity.CourseAdapter;
 
-public class CourseFragment extends Fragment implements AdapterView.OnItemClickListener
-{
+import java.io.Serializable;
+
+public class CourseFragment extends Fragment implements AdapterView.OnItemClickListener, Serializable {
     private CourseFragmentCom communication;
     private Competition competition;
     private DatabaseHelper databaseHelper;
@@ -35,6 +37,7 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
         this.competition = competition;
     }
 
+    //TODO what is this!!!
     public void updateCoursesReadyStates(Competition competition){
         if(databaseHelper != null && competition != null) {
             for (Course course : competition.getCourses()) {
@@ -54,6 +57,9 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            competition = (Competition) savedInstanceState.getSerializable(Constant.KEY_SELECTED_COMPETITION);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -89,5 +95,11 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         communication.onCourseItemClick(competition, competition.getCourses().get(i));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(Constant.KEY_SELECTED_COMPETITION, competition);
+        super.onSaveInstanceState(outState);
     }
 }

@@ -84,7 +84,9 @@ public class Helper {
         StringBuilder builder = new StringBuilder();
         for(String split : splittedValue){
             builder.append(firstToUpper(split));
+            builder.append(" ");
         }
+        builder.deleteCharAt(builder.length() - 1);
         return builder.toString();
     }
 }

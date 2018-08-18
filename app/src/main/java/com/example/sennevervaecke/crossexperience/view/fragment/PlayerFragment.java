@@ -13,9 +13,12 @@ import android.widget.VideoView;
 
 import com.example.sennevervaecke.crossexperience.R;
 import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.Constant;
 import com.example.sennevervaecke.crossexperience.model.Course;
 
-public class PlayerFragment extends Fragment {
+import java.io.Serializable;
+
+public class PlayerFragment extends Fragment implements Serializable {
 
     private VideoView videoView;
     private MediaController mediaController;
@@ -26,7 +29,6 @@ public class PlayerFragment extends Fragment {
 
     public PlayerFragment() {
         position = 0;
-        // Required empty public constructor
     }
 
     public Competition getCompetition() {
@@ -47,6 +49,11 @@ public class PlayerFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            competition = (Competition) savedInstanceState.getSerializable(Constant.KEY_SELECTED_COMPETITION);
+            course = (Course) savedInstanceState.getSerializable(Constant.KEY_SELECTED_COURSE);
+            this.position = savedInstanceState.getInt(Constant.KEY_VIDEO_POSITION);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -101,4 +108,11 @@ public class PlayerFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(Constant.KEY_SELECTED_COMPETITION, competition);
+        outState.putSerializable(Constant.KEY_SELECTED_COURSE, course);
+        outState.putInt(Constant.KEY_VIDEO_POSITION, videoView.getCurrentPosition());
+        super.onSaveInstanceState(outState);
+    }
 }

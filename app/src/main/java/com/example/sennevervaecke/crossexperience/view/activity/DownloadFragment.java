@@ -11,11 +11,13 @@ import android.widget.ProgressBar;
 
 import com.example.sennevervaecke.crossexperience.R;
 
+import java.io.Serializable;
+
 /**
  * Created by sennevervaecke on 3/3/2018.
  */
 
-public class DownloadFragment extends Fragment {
+public class DownloadFragment extends Fragment implements Serializable {
     private ProgressBar progressBar;
 
     public DownloadFragment(){}

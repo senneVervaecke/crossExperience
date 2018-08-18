@@ -11,13 +11,14 @@ import android.util.Log;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.Course;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by sennevervaecke on 3/4/2018.
  */
 
-public class DownloadManager extends Service{
+public class DownloadManager extends Service implements Serializable {
     private DownloadCompetitionTask downloadCompetitionTask;
     private ArrayList<DownloadCompetitionTask> queue;
     private Handler handler;
@@ -41,7 +42,7 @@ public class DownloadManager extends Service{
                 }
             }
             if(!isStarted) {
-                queue.add(new DownloadCompetitionTask(getApplicationContext(), handler, competition, course, ".mp4"));
+                queue.add(new DownloadCompetitionTask(getApplicationContext(), handler, competition, course, extension));
             }
         }
     }
@@ -86,9 +87,15 @@ public class DownloadManager extends Service{
         downloadCompetitionTask = queue.remove(0);
         downloadCompetitionTask.execute();
     }
-    public class DownloadBinder extends Binder {
+    public class DownloadBinder extends Binder implements Serializable {
         public DownloadManager getService(){
             return DownloadManager.this;
         }
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.e("service", "unbind called");
+        return true;
     }
 }

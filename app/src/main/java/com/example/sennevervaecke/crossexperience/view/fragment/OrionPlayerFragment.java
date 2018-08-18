@@ -12,11 +12,14 @@ import android.widget.MediaController;
 
 import com.example.sennevervaecke.crossexperience.R;
 import com.example.sennevervaecke.crossexperience.model.Competition;
+import com.example.sennevervaecke.crossexperience.model.Constant;
 import com.example.sennevervaecke.crossexperience.model.Course;
+
+import java.io.Serializable;
 
 import fi.finwe.orion360.OrionVideoView;
 
-public class OrionPlayerFragment extends Fragment {
+public class OrionPlayerFragment extends Fragment implements Serializable {
 
     private Competition competition;
     private Course course;
@@ -46,6 +49,10 @@ public class OrionPlayerFragment extends Fragment {
     }
 
     public void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            competition = (Competition) savedInstanceState.getSerializable(Constant.KEY_SELECTED_COMPETITION);
+            course = (Course) savedInstanceState.getSerializable(Constant.KEY_SELECTED_COURSE);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -127,4 +134,10 @@ public class OrionPlayerFragment extends Fragment {
         super.onDestroy();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(Constant.KEY_SELECTED_COMPETITION, competition);
+        outState.putSerializable(Constant.KEY_SELECTED_COURSE, course);
+        super.onSaveInstanceState(outState);
+    }
 }

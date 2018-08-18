@@ -28,6 +28,7 @@ import com.example.sennevervaecke.crossexperience.controller.DownloadManager;
 import com.example.sennevervaecke.crossexperience.controller.DownloadMonitor;
 import com.example.sennevervaecke.crossexperience.controller.Helper;
 import com.example.sennevervaecke.crossexperience.controller.UpdateDatabaseTask;
+import com.example.sennevervaecke.crossexperience.model.Constant;
 import com.example.sennevervaecke.crossexperience.model.interfaces.CompetitionFragmentCom;
 import com.example.sennevervaecke.crossexperience.model.interfaces.CourseFragmentCom;
 import com.example.sennevervaecke.crossexperience.model.Course;
@@ -38,6 +39,7 @@ import com.example.sennevervaecke.crossexperience.view.fragment.OrionPlayerFragm
 import com.example.sennevervaecke.crossexperience.view.fragment.PlayerFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.CourseFragment;
 
+import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
 public class StandardFlowActivity extends AppCompatActivity implements CompetitionFragmentCom, CourseFragmentCom {
@@ -96,13 +98,13 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
                     }
                 }
                 if(course != null) {
-                    if (!databaseHelper.checkReadyState(competition, course, ".mp4")) {
+                    if (!databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_VIDEO)) {
                         final Course finalCourse = course;
                         new AlertDialog.Builder(StandardFlowActivity.this).setMessage("There is no 360° video available at the moment.")
                                 .setPositiveButton("download regular video", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        downloadManager.startDownload(competition, finalCourse, ".mp4");
+                                        downloadManager.startDownload(competition, finalCourse, Constant.EXTENSION_VIDEO);
                                     }
                                 }).create().show();
                     } else {
@@ -119,34 +121,41 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_standard_flow);
-        UpdateDatabaseTask updateDatabaseTask = new UpdateDatabaseTask(getApplicationContext());
-        removeDownloadFragment = false;
-        //TODO: make happen async
-        try {
-            String result = updateDatabaseTask.execute().get();
-            Log.e("test", result);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+
+        //TODO move to application
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
         Intent serviceIntent = new Intent(this, DownloadManager.class);
-        if(!DownloadManager.isActive){
+        if (!DownloadManager.isActive) {
             startService(serviceIntent);
         }
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
 
-        competitionFragment = new CompetitionFragment();
-        courseFragment = new CourseFragment();
-        playerFragment = new PlayerFragment();
-        downloadFragment = new DownloadFragment();
-        orionPlayerFragment = new OrionPlayerFragment();
+        if(savedInstanceState == null) {
+            UpdateDatabaseTask updateDatabaseTask = new UpdateDatabaseTask(getApplicationContext());
+            removeDownloadFragment = false;
+            //TODO: make happen async
+            try {
+                String result = updateDatabaseTask.execute().get();
+                Log.e("test", result);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
 
-        //startSettingsFragment();
-        startCompetitionFragment();
+            competitionFragment = new CompetitionFragment();
+            courseFragment = new CourseFragment();
+            playerFragment = new PlayerFragment();
+            downloadFragment = new DownloadFragment();
+            orionPlayerFragment = new OrionPlayerFragment();
+
+            startCompetitionFragment();
+        }
     }
 
     @Override
@@ -156,13 +165,13 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
     @Override
     public void onCourseItemClick(final Competition competition, final Course course) {
         String videoPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(KEY_PREF_VIDEOTYPE, "");
-        if(databaseHelper.checkReadyState(competition, course, ".mp4") || databaseHelper.checkReadyState(competition, course, "360.mp4")) {
+        if(databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_VIDEO) || databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_360VIDEO)) {
             //handle orionPlayer vs videoPlayer
-            if(videoPref.equals("ORION") && databaseHelper.checkReadyState(competition, course, "360.mp4")){
+            if(videoPref.equals("ORION") && databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_360VIDEO)){
                 startOrionPlayerFragment(competition, course);
-            } else if(videoPref.equals("VIDEO") && databaseHelper.checkReadyState(competition, course, ".mp4")) {
+            } else if(videoPref.equals("VIDEO") && databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_VIDEO)) {
                 startPlayerFragment(competition, course);
-            } else if(videoPref.equals("ORION") && databaseHelper.checkReadyState(competition, course, ".mp4")){
+            } else if(videoPref.equals("ORION") && databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_VIDEO)){
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("there is no 360° video available")
@@ -170,7 +179,7 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
                         .setPositiveButton("download 360° video", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                downloadManager.startDownload(competition, course, "360.mp4");
+                                downloadManager.startDownload(competition, course, Constant.EXTENSION_360VIDEO);
                             }
                         }).setNeutralButton("play regular video", new DialogInterface.OnClickListener() {
                             @Override
@@ -179,14 +188,14 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
                             }
                         }).create().show();
 
-            } else if(videoPref.equals("VIDEO") && databaseHelper.checkReadyState(competition, course, "360.mp4")){
+            } else if(videoPref.equals("VIDEO") && databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_360VIDEO)){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("there is no 360° video available")
                         .setCancelable(true)
                         .setPositiveButton("download 360° video", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                downloadManager.startDownload(competition, course, "360.mp4");
+                                downloadManager.startDownload(competition, course, Constant.EXTENSION_360VIDEO);
                             }
                         }).setNeutralButton("play regular video", new DialogInterface.OnClickListener() {
                     @Override
@@ -198,9 +207,9 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         }else{
             if(downloadManager != null && Helper.isInternetConnected(this)){
                 if(videoPref.equals("VIDEO")) {
-                    downloadManager.startDownload(competition, course, ".mp4");
+                    downloadManager.startDownload(competition, course, Constant.EXTENSION_VIDEO);
                 } else if(videoPref.equals("ORION")){
-                    downloadManager.startDownload(competition, course, "360.mp4");
+                    downloadManager.startDownload(competition, course, Constant.EXTENSION_360VIDEO);
                 }
             }
             else{
@@ -210,29 +219,29 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
     }
 
     public void startCompetitionFragment(){
-        getSupportActionBar().setTitle("crossExperience");
+        getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, competitionFragment, "wedstrijd").commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, competitionFragment, "competition").commit();
     }
 
     public void startCourseFragment(Competition competition){
-        getSupportActionBar().setTitle(competition.getName());
+        getSupportActionBar().setTitle(Helper.toCamelCase(competition.getName()));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         courseFragment.setCompetition(competition);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.standardFlowBaseContainer, courseFragment, "reeks");
+        transaction.replace(R.id.standardFlowBaseContainer, courseFragment, "course");
         transaction.commit();
     }
 
     public void startOrionPlayerFragment(Competition competition, Course course){
-        getSupportActionBar().setTitle(competition.getName() + " " + course.getLevel());
+        getSupportActionBar().setTitle(Helper.toCamelCase(competition.getName() + " " + course.getLevel()));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         orionPlayerFragment.set(competition, course);
         getSupportFragmentManager().beginTransaction().replace(R.id.standardFlowBaseContainer, orionPlayerFragment, "orionPlayer").commit();
     }
 
     public void startPlayerFragment(Competition competition, Course course){
-        getSupportActionBar().setTitle(competition.getName() + " " + course.getLevel());
+        getSupportActionBar().setTitle(Helper.toCamelCase(competition.getName() + " " + course.getLevel()));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         playerFragment.setCompetition(competition);
         playerFragment.setCourse(course);
@@ -245,7 +254,7 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment;
             //check if current fragment is reeks
-            fragment = fragmentManager.findFragmentByTag("reeks");
+            fragment = fragmentManager.findFragmentByTag("course");
             if(fragment != null && fragment.isVisible()){
                 startCompetitionFragment();
                 return super.onOptionsItemSelected(item);
@@ -283,6 +292,69 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
             removeDownloadFragment = false;
         }
         super.onRestart();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        if(competitionFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, Constant.TAG_COMPETITION, competitionFragment);
+        if(courseFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, Constant.TAG_COURSE, courseFragment);
+        if(downloadFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, Constant.TAG_DOWNLOAD, downloadFragment);
+        if(playerFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, Constant.TAG_PLAYER, playerFragment);
+        if(orionPlayerFragment.isAdded())
+            getSupportFragmentManager().putFragment(outState, Constant.TAG_ORION_PLAYER, orionPlayerFragment);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        FragmentManager fm = getSupportFragmentManager();
+        competitionFragment = (CompetitionFragment) fm.getFragment(savedInstanceState, Constant.TAG_COMPETITION);
+        if(competitionFragment == null){
+            competitionFragment = new CompetitionFragment();
+        }
+        courseFragment = (CourseFragment) fm.getFragment(savedInstanceState, Constant.TAG_COURSE);
+        if(courseFragment == null){
+            courseFragment = new CourseFragment();
+        }
+        downloadFragment = (DownloadFragment) fm.getFragment(savedInstanceState, Constant.TAG_DOWNLOAD);
+        if(downloadFragment == null){
+            downloadFragment = new DownloadFragment();
+        }
+        playerFragment = (PlayerFragment) fm.getFragment(savedInstanceState, Constant.TAG_PLAYER);
+        if(playerFragment == null){
+            playerFragment = new PlayerFragment();
+        }
+        orionPlayerFragment = (OrionPlayerFragment) fm.getFragment(savedInstanceState, Constant.TAG_ORION_PLAYER);
+        if(orionPlayerFragment == null){
+            orionPlayerFragment = new OrionPlayerFragment();
+        }
+
+        if(getSupportFragmentManager().findFragmentByTag(Constant.TAG_COMPETITION) == null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            getSupportActionBar().setTitle(R.string.app_name);
+        }
+        if(getSupportFragmentManager().findFragmentByTag(Constant.TAG_COURSE) != null && courseFragment != null && courseFragment.getCompetition() != null){
+            getSupportActionBar().setTitle(Helper.toCamelCase(courseFragment.getCompetition().getName()));
+        } else if(getSupportFragmentManager().findFragmentByTag(Constant.TAG_PLAYER) != null && playerFragment != null && playerFragment.getCompetition() != null && playerFragment.getCourse() != null){
+            getSupportActionBar().setTitle(Helper.toCamelCase(playerFragment.getCompetition().getName() + " " + playerFragment.getCourse().getLevel()));
+        } else if(getSupportFragmentManager().findFragmentByTag(Constant.TAG_ORION_PLAYER) != null && orionPlayerFragment != null && orionPlayerFragment.getCompetition() != null && orionPlayerFragment.getCourse() != null){
+            getSupportActionBar().setTitle(Helper.toCamelCase(orionPlayerFragment.getCompetition().getName() + " " + orionPlayerFragment.getCourse().getLevel()));
+        }
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(connection);
+        super.onDestroy();
     }
 }
 

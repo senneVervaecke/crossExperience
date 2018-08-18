@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">crossExperience</string>
+    <string name="app_name">Cross Experience</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
@@ -16,7 +16,37 @@
         <item>ORION</item>
     </string-array>
 
+    <string-array name="pref_show_period_entry">
+        <item>1 maand</item>
+        <item>2 maand</item>
+        <item>3 maand</item>
+        <item>4 maand</item>
+        <item>5 maand</item>
+        <item>6 maand</item>
+        <item>7 maand</item>
+        <item>8 maand</item>
+        <item>9 maand</item>
+        <item>10 maand</item>
+        <item>11 maand</item>
+        <item>12 maand</item>
+    </string-array>
+    <integer-array name="pref_show_period_value">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </integer-array>
+
     <string name="pref_header_data">Data</string>
     <string name="pref_header_notifications">Notifications</string>
     <string name="settings">Settings</string>
+    <string name="showPeriod">how long in advance do you want to see the competitions?</string>
 </resources>
