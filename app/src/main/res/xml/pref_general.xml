@@ -8,10 +8,10 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_videotype_title" />
-    <!--<ListPreference-->
-        <!--android:defaultValue="3"-->
-        <!--android:key="showPeriod"-->
-        <!--android:title="@string/showPeriod"-->
-        <!--android:entries="@array/pref_show_period_entry"-->
-        <!--android:entryValues="@array/pref_show_period_value"/>-->
+    <ListPreference
+        android:defaultValue="3"
+        android:key="showPeriod"
+        android:title="@string/pref_show_period"
+        android:entries="@array/pref_month_always_entry"
+        android:entryValues="@array/pref_month_always_value" />
 </PreferenceScreen>

@@ -1,4 +1,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-
+<ListPreference
+    android:title="@string/pref_delete_time"
+    android:defaultValue="3"
+    android:entries="@array/pref_month_always_entry"
+    android:entryValues="@array/pref_month_always_value"
+    android:key="deleteTime" />
+    <ListPreference
+        android:title="@string/pref_video_quality_wifi"
+        android:defaultValue="1080"
+        android:entries="@array/pref_video_quality_entry"
+        android:entryValues="@array/pref_video_quality_values"
+        android:key="videoQualityWifi"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"/>
+    <ListPreference
+        android:title="@string/pref_video_quality_mobile"
+        android:defaultValue="480"
+        android:entries="@array/pref_video_quality_entry"
+        android:entryValues="@array/pref_video_quality_values"
+        android:key="videoQualityMobile"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"/>
 </PreferenceScreen>

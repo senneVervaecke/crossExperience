@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -18,6 +19,9 @@ public interface CompetitionDAO {
 
     @Query("SELECT * FROM competition;")
     public List<CompetitionEntity> getAll();
+
+    @Query("SELECT * FROM competition WHERE endDate BETWEEN :startDate AND :endDate;")
+    public List<CompetitionEntity> getBetween(long startDate, long endDate);
 
     @Query("DELETE FROM competition")
     public void nuke();

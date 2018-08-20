@@ -20,7 +20,6 @@ public class Constant {
     public static String KEY_SELECTED_COMPETITION = "selectedCompetition";
     public static String KEY_SELECTED_COURSE = "selectedCourse";
     public static String KEY_VIDEO_POSITION = "videoPosition";
-    public static String KEY_DOWNLOAD_MANAGER = "downloadManager";
-
+    public static String KEY_SHOW_PERIOD = "showPeriod";
 
 }

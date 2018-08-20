@@ -30,6 +30,10 @@ public class CompetitionAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(this.context);
     }
 
+    public void setCompetitions(ArrayList<Competition> competitions){
+        this.competitions = competitions;
+    }
+
 
     @Override
     public int getCount() {

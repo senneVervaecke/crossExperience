@@ -34,6 +34,7 @@ import com.example.sennevervaecke.crossexperience.model.interfaces.CourseFragmen
 import com.example.sennevervaecke.crossexperience.model.Course;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
+import com.example.sennevervaecke.crossexperience.model.interfaces.UpdateDatabaseCom;
 import com.example.sennevervaecke.crossexperience.view.fragment.CompetitionFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.OrionPlayerFragment;
 import com.example.sennevervaecke.crossexperience.view.fragment.PlayerFragment;
@@ -42,7 +43,7 @@ import com.example.sennevervaecke.crossexperience.view.fragment.CourseFragment;
 import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
-public class StandardFlowActivity extends AppCompatActivity implements CompetitionFragmentCom, CourseFragmentCom {
+public class StandardFlowActivity extends AppCompatActivity implements CompetitionFragmentCom, CourseFragmentCom, UpdateDatabaseCom {
 
     private static final String KEY_PREF_VIDEOTYPE = "videotype";
 
@@ -122,11 +123,6 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_standard_flow);
 
-        //TODO move to application
-        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
-
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
         Intent serviceIntent = new Intent(this, DownloadManager.class);
@@ -136,17 +132,10 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
 
         if(savedInstanceState == null) {
-            UpdateDatabaseTask updateDatabaseTask = new UpdateDatabaseTask(getApplicationContext());
+            UpdateDatabaseTask updateDatabaseTask = new UpdateDatabaseTask(getApplicationContext(), this);
+            updateDatabaseTask.execute();
+
             removeDownloadFragment = false;
-            //TODO: make happen async
-            try {
-                String result = updateDatabaseTask.execute().get();
-                Log.e("test", result);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
 
             competitionFragment = new CompetitionFragment();
             courseFragment = new CourseFragment();
@@ -291,6 +280,7 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
             getSupportFragmentManager().beginTransaction().remove(downloadFragment).commit();
             removeDownloadFragment = false;
         }
+        //competitionFragment.refresh();
         super.onRestart();
     }
 
@@ -355,6 +345,11 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
     protected void onDestroy() {
         unbindService(connection);
         super.onDestroy();
+    }
+
+    @Override
+    public void onCompleteTask() {
+        competitionFragment.refresh();
     }
 }
 

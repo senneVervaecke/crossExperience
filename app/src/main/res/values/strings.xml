@@ -3,20 +3,26 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    <string name="settings">Settings</string>
+    <!--header-->
     <string name="pref_header_general">General</string>
+    <string name="pref_header_data">Data</string>
+    <string name="pref_header_notifications">Notifications</string>
 
-    <string name="pref_videotype_title">Videoplayer type</string>
-
+    <!--videoplayer type-->
+    <string name="pref_videotype_title">Videoplayer Type</string>
     <string-array name="pref_videotype">
-        <item>Video</item>
-        <item>360°</item>
+        <item>Standard Video</item>
+        <item>360° Video</item>
     </string-array>
     <string-array name="pref_videotype_value">
         <item>VIDEO</item>
         <item>ORION</item>
     </string-array>
 
-    <string-array name="pref_show_period_entry">
+    <!--show period-->
+    <string name="pref_show_period">Show Competitions until</string>
+    <string-array name="pref_month_always_entry">
         <item>1 maand</item>
         <item>2 maand</item>
         <item>3 maand</item>
@@ -29,8 +35,9 @@
         <item>10 maand</item>
         <item>11 maand</item>
         <item>12 maand</item>
+        <item>always</item>
     </string-array>
-    <integer-array name="pref_show_period_value">
+    <string-array name="pref_month_always_value">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -43,10 +50,57 @@
         <item>10</item>
         <item>11</item>
         <item>12</item>
-    </integer-array>
+        <item>-1</item>
+    </string-array>
 
-    <string name="pref_header_data">Data</string>
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="settings">Settings</string>
-    <string name="showPeriod">how long in advance do you want to see the competitions?</string>
+    <!--delete time-->
+    <string name="pref_delete_time">Delete Video After </string>
+    <string-array name="pref_month_never_entry">
+        <item>1 maand</item>
+        <item>2 maand</item>
+        <item>3 maand</item>
+        <item>4 maand</item>
+        <item>5 maand</item>
+        <item>6 maand</item>
+        <item>7 maand</item>
+        <item>8 maand</item>
+        <item>9 maand</item>
+        <item>10 maand</item>
+        <item>11 maand</item>
+        <item>12 maand</item>
+        <item>never</item>
+    </string-array>
+    <string-array name="pref_month_never_value">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>-1</item>
+    </string-array>
+
+    <!--wifi video quality-->
+    <string name="pref_video_quality_wifi">Wifi Video Quality</string>
+    <string-array name="pref_video_quality_entry">
+        <item>360p</item>
+        <item>480p</item>
+        <item>720p</item>
+        <item>1080p</item>
+    </string-array>
+    <string-array name="pref_video_quality_values">
+        <item>360</item>
+        <item>480</item>
+        <item>720</item>
+        <item>1080</item>
+    </string-array>
+    <!--mobile video quality-->
+    <string name="pref_video_quality_mobile">Mobile Data Video Quality</string>
+
 </resources>

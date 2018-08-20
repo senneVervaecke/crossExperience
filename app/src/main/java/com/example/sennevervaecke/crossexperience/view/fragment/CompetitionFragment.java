@@ -1,7 +1,9 @@
 package com.example.sennevervaecke.crossexperience.view.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +20,13 @@ import com.example.sennevervaecke.crossexperience.view.activity.CompetitionAdapt
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CompetitionFragment extends Fragment implements AdapterView.OnItemClickListener, Serializable {
 
     private ArrayList<Competition> competitions;
     private CompetitionFragmentCom communication;
+    private CompetitionAdapter adapter;
 
     public CompetitionFragment() {
         // Required empty public constructor
@@ -31,14 +35,14 @@ public class CompetitionFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        competitions = new DatabaseHelper(getContext()).getAllCompetitions();
+        competitions = getCompetitions();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_wedstrijd, container, false);
         ListView listView = view.findViewById(R.id.wedstrijdListView);
-        CompetitionAdapter adapter = new CompetitionAdapter(getContext(), competitions);
+        adapter = new CompetitionAdapter(getContext(), competitions);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         return view;
@@ -57,5 +61,19 @@ public class CompetitionFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         communication.onCompetitionItemClick(competitions.get(i));
+    }
+    public void refresh(){
+        competitions = getCompetitions();
+        adapter.setCompetitions(competitions);
+        adapter.notifyDataSetChanged();
+    }
+
+    private ArrayList<Competition> getCompetitions(){
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.DATE, -1);
+        Calendar endDate = Calendar.getInstance();
+        int monthPeriod = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constant.KEY_SHOW_PERIOD, "3"));
+        endDate.add(Calendar.MONTH, monthPeriod);
+        return new DatabaseHelper(getContext()).getCompetitionsBetween(startDate, endDate);
     }
 }

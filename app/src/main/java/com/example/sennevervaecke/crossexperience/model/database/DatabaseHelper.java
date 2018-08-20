@@ -82,6 +82,22 @@ public class DatabaseHelper {
         }
         return competitions;
     }
+    public ArrayList<Competition> getCompetitionsBetween(Calendar startDate, Calendar endDate){
+        ArrayList<Competition> competitions = new ArrayList<>();
+        List<CompetitionEntity> competitionEntities = db.competitionDAO().getBetween(startDate.getTimeInMillis(), endDate.getTimeInMillis());
+        for (CompetitionEntity competitionEntity:competitionEntities) {
+            Competition competition = new Competition(competitionEntity);
+            competition.setAdress(db.adressDAO().get(competitionEntity.getAdressId()));
+            List<CourseEntity> courseEntities = db.courseDAO().getByCompetitionId(competitionEntity.getId());
+            ArrayList<Course> courses = new ArrayList<>();
+            for(int i = 0; i < courseEntities.size(); i++){
+                courses.add(new Course(courseEntities.get(i)));
+            }
+            competition.setCourses(courses);
+            competitions.add(competition);
+        }
+        return competitions;
+    }
 
     public boolean checkReadyState(Competition competition, Course course, String fileExtension){
         //if necesary check if download in progress

@@ -7,6 +7,7 @@ import com.example.sennevervaecke.crossexperience.model.Adress;
 import com.example.sennevervaecke.crossexperience.model.database.CompetitionEntity;
 import com.example.sennevervaecke.crossexperience.model.database.CourseEntity;
 import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
+import com.example.sennevervaecke.crossexperience.model.interfaces.UpdateDatabaseCom;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,9 +28,19 @@ public class UpdateDatabaseTask extends AsyncTask<Void, Void, String> {
     private ArrayList<CompetitionEntity> competitions;
     private ArrayList<CourseEntity> courses;
     private ArrayList<Adress> adresses;
+    private UpdateDatabaseCom com;
 
-    public UpdateDatabaseTask(Context context){
+    public UpdateDatabaseTask(Context context, UpdateDatabaseCom com){
         this.context = context;
+        this.com = com;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        if(!Helper.isInternetConnected(context)){
+            this.cancel(true);
+        }
+        super.onPreExecute();
     }
 
     @Override
@@ -131,5 +142,11 @@ public class UpdateDatabaseTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        com.onCompleteTask();
+        super.onPostExecute(s);
     }
 }
