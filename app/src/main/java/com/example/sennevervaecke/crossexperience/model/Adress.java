@@ -82,4 +82,31 @@ public class Adress implements Serializable {
     public void setNumber(int number) {
         this.number = number;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Adress adress = (Adress) o;
+
+        if (id != adress.id) return false;
+        if (postalcode != adress.postalcode) return false;
+        if (number != adress.number) return false;
+        if (country != null ? !country.equals(adress.country) : adress.country != null)
+            return false;
+        if (city != null ? !city.equals(adress.city) : adress.city != null) return false;
+        return street != null ? street.equals(adress.street) : adress.street == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (country != null ? country.hashCode() : 0);
+        result = 31 * result + (city != null ? city.hashCode() : 0);
+        result = 31 * result + postalcode;
+        result = 31 * result + (street != null ? street.hashCode() : 0);
+        result = 31 * result + number;
+        return result;
+    }
 }

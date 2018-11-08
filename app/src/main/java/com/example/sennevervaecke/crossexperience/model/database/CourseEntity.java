@@ -2,6 +2,8 @@ package com.example.sennevervaecke.crossexperience.model.database;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 /**
@@ -23,7 +25,7 @@ public class CourseEntity {
 
     public CourseEntity() {
     }
-
+    @Ignore
     public CourseEntity(int id, String level, double distance, int speed, int competitionId) {
         this.id = id;
         this.level = level;
@@ -70,5 +72,32 @@ public class CourseEntity {
 
     public void setCompetitionId(int competitionId) {
         this.competitionId = competitionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CourseEntity that = (CourseEntity) o;
+
+        if (id != that.id) return false;
+        if (Double.compare(that.distance, distance) != 0) return false;
+        if (speed != that.speed) return false;
+        if (competitionId != that.competitionId) return false;
+        return level != null ? level.equals(that.level) : that.level == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = id;
+        result = 31 * result + (level != null ? level.hashCode() : 0);
+        temp = Double.doubleToLongBits(distance);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + speed;
+        result = 31 * result + competitionId;
+        return result;
     }
 }

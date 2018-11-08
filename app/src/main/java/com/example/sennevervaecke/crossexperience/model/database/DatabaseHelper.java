@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.sennevervaecke.crossexperience.model.Adress;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 import com.example.sennevervaecke.crossexperience.model.Course;
+import com.example.sennevervaecke.crossexperience.model.Element;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,91 +20,89 @@ import java.util.List;
 
 public class DatabaseHelper {
     private Database db;
-    private Context context;
 
     public DatabaseHelper(Context context){
-        this.context = context;
         db = Database.getAppDatabase(context);
     }
-    public void fillWithTest(){
-        nukeAll();
-
-        db.adressDAO().insert(new Adress(1, "belgie", "waregem", 4520, "koersstraat", 45));
-
-        db.competitionDAO().insert(new CompetitionEntity(1, "waregem", 1, new Date(), new Date()),
-                new CompetitionEntity(2, "nokere", 1, new Date(), new Date()));
-
-        db.courseDAO().insert(new CourseEntity(1, "midden", 1450, 520, 1),
-                new CourseEntity(2, "zwaar", 1600, 550, 1),
-                new CourseEntity(3, "midden", 2100, 520, 2),
-                new CourseEntity(4, "zwaar", 2300, 550, 2));
+    public DatabaseHelper(Database database){
+        db= database;
     }
+
+    //TODO remove
     public void fill(ArrayList<CompetitionEntity> competitionEntities, ArrayList<CourseEntity> courseEntities, ArrayList<Adress> adresses){
-        nukeAll();
-
-        db.adressDAO().insert(adresses.toArray(new Adress[]{}));
-        db.competitionDAO().insert(competitionEntities.toArray(new CompetitionEntity[]{}));
-        db.courseDAO().insert(courseEntities.toArray(new CourseEntity[]{}));
+//        nukeAll();
+//
+//        db.adressDAO().insert(adresses.toArray(new Adress[]{}));
+//        db.competitionDAO().insert(competitionEntities.toArray(new CompetitionEntity[]{}));
+//        db.courseDAO().insert(courseEntities.toArray(new CourseEntity[]{}));
+        return;
     }
+
+    //TODO remove
     private void nukeAll(){
-        db.adressDAO().nuke();
-        db.courseDAO().nuke();
-        db.competitionDAO().nuke();
+//        db.adressDAO().nuke();
+//        db.courseDAO().nuke();
+//        db.competitionDAO().nuke();
+        return;
     }
 
     public Competition getCompetition(int id){
         CompetitionEntity competitionEntity = db.competitionDAO().get(id);
-        Competition competition = new Competition(competitionEntity);
-        competition.setAdress(db.adressDAO().get(competitionEntity.getAdressId()));
-        List<CourseEntity> courseEntities = db.courseDAO().getByCompetitionId(competitionEntity.getId());
-        ArrayList<Course> courses = new ArrayList<>();
-        for(int i = 0; i < courseEntities.size(); i++){
-            courses.add(new Course(courseEntities.get(i)));
+        if(competitionEntity == null){
+            return null;
         }
-        competition.setCourses(courses);
+        return getCompetitionByEntity(competitionEntity);
+    }
 
+    private Competition getCompetitionByEntity(CompetitionEntity competitionEntity){
+        Competition competition = new Competition(competitionEntity);
+
+        //add address to competition
+        competition.setAdress(db.adressDAO().get(competitionEntity.getAdressId()));
+
+        //add courses to competition
+        List<CourseEntity> courseEntities = db.courseDAO().getByCompetitionId(competitionEntity.getId());
+        for(int i = 0; i < courseEntities.size(); i++){
+            Course course = new Course(courseEntities.get(i));
+            //add elements to courses
+            List<ElementEntity> elementEntities = db.elementDao().getByCourseId(course.getId());
+            for(int j = 0; j < elementEntities.size(); j++){
+                //add FileGroup to element
+                Element element = new Element(elementEntities.get(j), db.fileGroupDao().get(elementEntities.get(j).getFileGroupId()));
+                //add FileNames to FileGroup
+                List<FileName> fileNames = db.fileNameDao().getByFileGroupId(element.getFiles().getId());
+                for(int k = 0; k < fileNames.size(); k++){
+                    element.getFiles().addFileName(fileNames.get(k).getFileName());
+                }
+                course.addElement(element);
+            }
+            competition.addCourse(course);
+        }
         return competition;
     }
 
     public ArrayList<Competition> getAllCompetitions(){
         ArrayList<Competition> competitions = new ArrayList<>();
         List<CompetitionEntity> competitionEntities = db.competitionDAO().getAll();
-
-        for (CompetitionEntity competitionEntity:competitionEntities) {
-            Competition competition = new Competition(competitionEntity);
-            competition.setAdress(db.adressDAO().get(competitionEntity.getAdressId()));
-            List<CourseEntity> courseEntities = db.courseDAO().getByCompetitionId(competitionEntity.getId());
-            ArrayList<Course> courses = new ArrayList<>();
-            for(int i = 0; i < courseEntities.size(); i++){
-                courses.add(new Course(courseEntities.get(i)));
-            }
-            competition.setCourses(courses);
-            competitions.add(competition);
+        for(int i = 0; i < competitionEntities.size(); i++){
+            competitions.add(getCompetitionByEntity(competitionEntities.get(i)));
         }
         return competitions;
     }
     public ArrayList<Competition> getCompetitionsBetween(Calendar startDate, Calendar endDate){
         ArrayList<Competition> competitions = new ArrayList<>();
         List<CompetitionEntity> competitionEntities = db.competitionDAO().getBetween(startDate.getTimeInMillis(), endDate.getTimeInMillis());
-        for (CompetitionEntity competitionEntity:competitionEntities) {
-            Competition competition = new Competition(competitionEntity);
-            competition.setAdress(db.adressDAO().get(competitionEntity.getAdressId()));
-            List<CourseEntity> courseEntities = db.courseDAO().getByCompetitionId(competitionEntity.getId());
-            ArrayList<Course> courses = new ArrayList<>();
-            for(int i = 0; i < courseEntities.size(); i++){
-                courses.add(new Course(courseEntities.get(i)));
-            }
-            competition.setCourses(courses);
-            competitions.add(competition);
+        for(int i = 0; i < competitionEntities.size(); i++){
+            competitions.add(getCompetitionByEntity(competitionEntities.get(i)));
         }
         return competitions;
     }
-
+    //TODO remove
     public boolean checkReadyState(Competition competition, Course course, String fileExtension){
-        //if necesary check if download in progress
-        File file = new File(context.getFilesDir() + "/" + competition.getName() + "_" + course.getLevel() + fileExtension);
-        boolean exist = file.exists();
-        return exist;
+//        File file = new File(context.getFilesDir() + "/" + competition.getName() + "_" + course.getLevel() + fileExtension);
+//        boolean exist = file.exists();
+//        return exist;
+        return false;
     }
 
 }

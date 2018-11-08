@@ -93,4 +93,35 @@ public class Competition implements Serializable{
     public void setCourses(ArrayList<Course> courses) {
         this.courses = courses;
     }
+
+    public void addCourse(Course course){
+        this.courses.add(course);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Competition that = (Competition) o;
+
+        if (id != that.id) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (adress != null ? !adress.equals(that.adress) : that.adress != null) return false;
+        if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null)
+            return false;
+        if (endDate != null ? !endDate.equals(that.endDate) : that.endDate != null) return false;
+        return courses != null ? courses.equals(that.courses) : that.courses == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (adress != null ? adress.hashCode() : 0);
+        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
+        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        result = 31 * result + (courses != null ? courses.hashCode() : 0);
+        return result;
+    }
 }

@@ -41,7 +41,7 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
     public void updateCoursesReadyStates(Competition competition){
         if(databaseHelper != null && competition != null) {
             for (Course course : competition.getCourses()) {
-                course.setReadyState(databaseHelper.checkReadyState(competition, course, ".mp4"));
+                //course.setReadyState(databaseHelper.checkReadyState(competition, course, ".mp4"));
             }
         }
     }

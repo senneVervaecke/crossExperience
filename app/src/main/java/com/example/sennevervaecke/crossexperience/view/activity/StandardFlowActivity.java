@@ -179,17 +179,17 @@ public class StandardFlowActivity extends AppCompatActivity implements Competiti
 
             } else if(videoPref.equals("VIDEO") && databaseHelper.checkReadyState(competition, course, Constant.EXTENSION_360VIDEO)){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("there is no 360° video available")
+                builder.setMessage("there is no standard video available")
                         .setCancelable(true)
-                        .setPositiveButton("download 360° video", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("download standard video", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                downloadManager.startDownload(competition, course, Constant.EXTENSION_360VIDEO);
+                                downloadManager.startDownload(competition, course, Constant.EXTENSION_VIDEO);
                             }
-                        }).setNeutralButton("play regular video", new DialogInterface.OnClickListener() {
+                        }).setNeutralButton("play 360° video", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        startPlayerFragment(competition, course);
+                        startOrionPlayerFragment(competition, course);
                     }
                 }).create().show();
             }

@@ -51,12 +51,12 @@ public class CourseAdapter extends BaseAdapter {
         level.setText(Helper.toCamelCase(courses.get(i).getLevel()));
 
         ImageView image = view.findViewById(R.id.videoStaatImg);
-        if(courses.get(i).isReadyState()){
+        if(true){
             image.setImageResource(R.drawable.play);
         }
-        else{
-            image.setImageResource(R.drawable.download);
-        }
+//        else{
+//            image.setImageResource(R.drawable.download);
+//        }
         return view;
     }
 }
