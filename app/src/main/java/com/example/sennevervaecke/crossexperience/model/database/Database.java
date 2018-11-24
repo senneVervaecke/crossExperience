@@ -10,7 +10,7 @@ import com.example.sennevervaecke.crossexperience.model.Adress;
  * Created by sennevervaecke on 3/16/2018.
  */
 
-@android.arch.persistence.room.Database(entities = {Adress.class, CourseEntity.class, CompetitionEntity.class, ElementEntity.class, FileGroupEntity.class, FileName.class}, version = 2)
+@android.arch.persistence.room.Database(entities = {Adress.class, CourseEntity.class, CompetitionEntity.class, ElementEntity.class, FileGroupEntity.class, FileName.class}, version = 3)
 public abstract class Database extends RoomDatabase {
     private static Database instance;
 

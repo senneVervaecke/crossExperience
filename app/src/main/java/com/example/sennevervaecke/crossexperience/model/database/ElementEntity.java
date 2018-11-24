@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.example.sennevervaecke.crossexperience.model.Element;
 import com.example.sennevervaecke.crossexperience.model.FileGroup;
 
 /**
@@ -28,6 +29,14 @@ public class ElementEntity {
         this.id = id;
         this.name = name;
         this.fileGroupId = fileGroupId;
+        this.courseId = courseId;
+    }
+
+    @Ignore
+    public ElementEntity(Element element, int courseId){
+        this.id = element.getId();
+        this.name = element.getName();
+        this.fileGroupId = element.getFiles().getId();
         this.courseId = courseId;
     }
 

@@ -6,6 +6,8 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.example.sennevervaecke.crossexperience.model.Course;
+
 /**
  * Created by sennevervaecke on 3/16/2018.
  */
@@ -31,6 +33,15 @@ public class CourseEntity {
         this.level = level;
         this.distance = distance;
         this.speed = speed;
+        this.competitionId = competitionId;
+    }
+
+    @Ignore
+    public CourseEntity(Course course, int competitionId){
+        this.id = course.getId();
+        this.level = course.getLevel();
+        this.distance = course.getDistance();
+        this.speed = course.getSpeed();
         this.competitionId = competitionId;
     }
 

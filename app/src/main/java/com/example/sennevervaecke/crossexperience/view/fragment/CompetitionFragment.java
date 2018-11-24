@@ -1,10 +1,10 @@
 package com.example.sennevervaecke.crossexperience.view.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +74,7 @@ public class CompetitionFragment extends Fragment implements AdapterView.OnItemC
         Calendar endDate = Calendar.getInstance();
         int monthPeriod = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constant.KEY_SHOW_PERIOD, "3"));
         endDate.add(Calendar.MONTH, monthPeriod);
+        Log.e("dates", startDate.getTime() + "-----" + endDate.getTime());
         return new DatabaseHelper(getContext()).getCompetitionsBetween(startDate, endDate);
     }
 }

@@ -22,4 +22,7 @@ public interface FileNameDao {
     public List<FileName> getByFileGroupId(int fileGroupId);
     @Insert
     public void insert(FileName...fileNames);
+
+    @Query("DELETE FROM fileName")
+    public void nuke();
 }

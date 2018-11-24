@@ -6,6 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.example.sennevervaecke.crossexperience.model.DataType;
+import com.example.sennevervaecke.crossexperience.model.FileGroup;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,12 @@ public class FileGroupEntity {
     public FileGroupEntity(int id, String dataType) {
         this.id = id;
         this.dataType = dataType;
+    }
+
+    @Ignore
+    public FileGroupEntity(FileGroup fileGroup){
+        this.id = fileGroup.getId();
+        this.dataType = fileGroup.getDataType().name();
     }
 
     public int getId() {

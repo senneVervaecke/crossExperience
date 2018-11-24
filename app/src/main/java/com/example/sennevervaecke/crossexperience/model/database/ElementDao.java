@@ -21,6 +21,9 @@ public interface ElementDao {
     @Query("SELECT * FROM element WHERE courseId = :courseId;")
     public List<ElementEntity> getByCourseId(int courseId);
 
+    @Query("DELETE FROM element")
+    public void nuke();
+
     @Insert
     public void insert(ElementEntity...elementEntities);
 }

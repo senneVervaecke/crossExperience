@@ -10,6 +10,7 @@ import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
 
 import com.example.sennevervaecke.crossexperience.model.Adress;
+import com.example.sennevervaecke.crossexperience.model.Competition;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -42,6 +43,15 @@ public class CompetitionEntity {
         this.adressId = adressId;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    @Ignore
+    public CompetitionEntity(Competition competition){
+        this.id = competition.getId();
+        this.name = competition.getName();
+        this.adressId = competition.getAdress().getId();
+        this.startDate = competition.getStartDate().getTime();
+        this.endDate = competition.getEndDate().getTime();
     }
 
     public int getId() {

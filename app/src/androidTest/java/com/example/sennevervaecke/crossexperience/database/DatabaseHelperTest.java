@@ -121,4 +121,18 @@ public class DatabaseHelperTest {
         ArrayList<Competition> results = databaseHelper.getCompetitionsBetween(startDate, endDate);
         Assert.assertEquals(0, results.size());
     }
+
+    @Test
+    public void RemoveAllAndInsertAllCompetitions() throws ParseException {
+        ArrayList<Competition> competitions = new ArrayList<>();
+        competitions.add(DataHelper.getCompetition1());
+        competitions.add(DataHelper.getCompetition2());
+        databaseHelper.deleteAndInsertAll(competitions);
+
+        ArrayList<Competition> result = databaseHelper.getAllCompetitions();
+
+        Assert.assertEquals(2, result.size());
+        Assert.assertEquals(DataHelper.getCompetition1(), result.get(0));
+        Assert.assertEquals(DataHelper.getCompetition2(), result.get(1));
+    }
 }

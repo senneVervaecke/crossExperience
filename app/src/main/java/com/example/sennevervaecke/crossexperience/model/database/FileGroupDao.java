@@ -20,4 +20,7 @@ public interface FileGroupDao {
 
     @Insert
     public void insert(FileGroupEntity...fileGroupEntities);
+
+    @Query("DELETE FROM fileGroup")
+    public void nuke();
 }
