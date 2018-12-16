@@ -8,6 +8,7 @@ public class Constant {
     //fragment tags
     public static String TAG_COMPETITION = "competition";
     public static String TAG_COURSE = "course";
+    public static String TAG_ELEMENT = "element";
     public static String TAG_DOWNLOAD = "download";
     public static String TAG_PLAYER = "player";
     public static String TAG_ORION_PLAYER = "orion";
@@ -19,6 +20,8 @@ public class Constant {
     //keys
     public static String KEY_SELECTED_COMPETITION = "selectedCompetition";
     public static String KEY_SELECTED_COURSE = "selectedCourse";
+    public static String KEY_SELECTED_COURSES = "selectedCourses";
+    public static String KEY_SELECTED_ELEMENTS = "selectedElements";
     public static String KEY_VIDEO_POSITION = "videoPosition";
     public static String KEY_SHOW_PERIOD = "showPeriod";
 

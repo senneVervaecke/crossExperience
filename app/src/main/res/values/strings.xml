@@ -103,4 +103,8 @@
     <!--mobile video quality-->
     <string name="pref_video_quality_mobile">Mobile Data Video Quality</string>
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="datatype_icon">datatype icon</string>
+    <string name="state_icon">state icon</string>
+
 </resources>

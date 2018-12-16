@@ -74,7 +74,6 @@ public class CompetitionFragment extends Fragment implements AdapterView.OnItemC
         Calendar endDate = Calendar.getInstance();
         int monthPeriod = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constant.KEY_SHOW_PERIOD, "3"));
         endDate.add(Calendar.MONTH, monthPeriod);
-        Log.e("dates", startDate.getTime() + "-----" + endDate.getTime());
         return new DatabaseHelper(getContext()).getCompetitionsBetween(startDate, endDate);
     }
 }

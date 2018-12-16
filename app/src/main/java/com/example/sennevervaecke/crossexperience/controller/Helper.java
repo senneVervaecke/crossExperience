@@ -64,6 +64,7 @@ public class Helper {
         snackbarView.setLayoutParams(layout);
         return snackbar;
     }
+
     public static String firstToUpper(String value){
         if(value == null){
             return null;

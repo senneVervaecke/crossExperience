@@ -125,12 +125,5 @@ public class DatabaseHelper {
         }
         return competitions;
     }
-    //TODO remove
-    public boolean checkReadyState(Competition competition, Course course, String fileExtension){
-//        File file = new File(context.getFilesDir() + "/" + competition.getName() + "_" + course.getLevel() + fileExtension);
-//        boolean exist = file.exists();
-//        return exist;
-        return false;
-    }
 
 }

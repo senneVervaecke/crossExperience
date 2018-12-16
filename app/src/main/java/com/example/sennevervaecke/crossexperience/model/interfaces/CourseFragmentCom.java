@@ -8,5 +8,5 @@ import com.example.sennevervaecke.crossexperience.model.Course;
  */
 
 public interface CourseFragmentCom {
-    public void onCourseItemClick(Competition competition, Course course);
+    public void onCourseItemClick(Course course);
 }

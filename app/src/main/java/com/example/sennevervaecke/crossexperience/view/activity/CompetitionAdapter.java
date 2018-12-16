@@ -11,6 +11,7 @@ import com.example.sennevervaecke.crossexperience.R;
 import com.example.sennevervaecke.crossexperience.controller.Helper;
 import com.example.sennevervaecke.crossexperience.model.Competition;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -18,7 +19,7 @@ import java.util.Calendar;
  * Created by sennevervaecke on 11/22/2017.
  */
 
-public class CompetitionAdapter extends BaseAdapter {
+public class CompetitionAdapter extends BaseAdapter implements Serializable {
 
     private ArrayList<Competition> competitions;
     private Context context;

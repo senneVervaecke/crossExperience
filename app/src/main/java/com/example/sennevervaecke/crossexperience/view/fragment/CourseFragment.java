@@ -19,46 +19,27 @@ import com.example.sennevervaecke.crossexperience.model.database.DatabaseHelper;
 import com.example.sennevervaecke.crossexperience.view.activity.CourseAdapter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class CourseFragment extends Fragment implements AdapterView.OnItemClickListener, Serializable {
     private CourseFragmentCom communication;
-    private Competition competition;
+    private ArrayList<Course> courses;
     private DatabaseHelper databaseHelper;
 
     public CourseFragment() {
         // Required empty public constructor
     }
 
-    public Competition getCompetition() {
-        return competition;
+
+    public void setCourses(ArrayList<Course> courses) {
+        this.courses = courses;
     }
 
-    public void setCompetition(Competition competition) {
-        this.competition = competition;
-    }
-
-    //TODO what is this!!!
-    public void updateCoursesReadyStates(Competition competition){
-        if(databaseHelper != null && competition != null) {
-            for (Course course : competition.getCourses()) {
-                //course.setReadyState(databaseHelper.checkReadyState(competition, course, ".mp4"));
-            }
-        }
-    }
-
-    public void refresh(){
-        if(this.isAdded() && competition != null && databaseHelper != null){
-            updateCoursesReadyStates(competition);
-            ListView listView = getView().findViewById(R.id.reeksListView);
-            CourseAdapter adapter = new CourseAdapter(getContext(), competition.getCourses());
-            listView.setAdapter(adapter);
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if(savedInstanceState != null) {
-            competition = (Competition) savedInstanceState.getSerializable(Constant.KEY_SELECTED_COMPETITION);
+            courses = (ArrayList<Course>) savedInstanceState.getSerializable(Constant.KEY_SELECTED_COURSES);
         }
         super.onCreate(savedInstanceState);
     }
@@ -69,9 +50,8 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
         databaseHelper = new DatabaseHelper(getContext());
         View view = inflater.inflate(R.layout.fragment_reeks, container, false);
         ListView listView = view.findViewById(R.id.reeksListView);
-        if(competition != null) {
-            updateCoursesReadyStates(competition);
-            CourseAdapter adapter = new CourseAdapter(getContext(), competition.getCourses());
+        if(courses != null) {
+            CourseAdapter adapter = new CourseAdapter(getContext(), courses);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(this);
         }
@@ -94,12 +74,12 @@ public class CourseFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        communication.onCourseItemClick(competition, competition.getCourses().get(i));
+        communication.onCourseItemClick(courses.get(i));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(Constant.KEY_SELECTED_COMPETITION, competition);
+        outState.putSerializable(Constant.KEY_SELECTED_COURSES, courses);
         super.onSaveInstanceState(outState);
     }
 }

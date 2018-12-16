@@ -11,13 +11,15 @@ import android.widget.TextView;
 import com.example.sennevervaecke.crossexperience.R;
 import com.example.sennevervaecke.crossexperience.controller.Helper;
 import com.example.sennevervaecke.crossexperience.model.Course;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by sennevervaecke on 11/22/2017.
  */
 
-public class CourseAdapter extends BaseAdapter {
+public class CourseAdapter extends BaseAdapter implements Serializable {
 
     private ArrayList<Course> courses;
     private Context context;
@@ -50,13 +52,6 @@ public class CourseAdapter extends BaseAdapter {
         TextView level = view.findViewById(R.id.reeksNaam);
         level.setText(Helper.toCamelCase(courses.get(i).getLevel()));
 
-        ImageView image = view.findViewById(R.id.videoStaatImg);
-        if(true){
-            image.setImageResource(R.drawable.play);
-        }
-//        else{
-//            image.setImageResource(R.drawable.download);
-//        }
         return view;
     }
 }
